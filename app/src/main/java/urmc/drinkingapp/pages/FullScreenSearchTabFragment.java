@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 
 import android.app.SearchManager;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+
+import urmc.drinkingapp.R;
 
 
 /**

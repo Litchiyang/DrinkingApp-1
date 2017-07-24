@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,12 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import mehdi.sakout.fancybuttons.FancyButton;
-
-import static android.R.attr.duration;
-import static urmc.drinkingapp.R.id.text;
+import urmc.drinkingapp.DrunkModeDefaultActivity;
+import urmc.drinkingapp.R;
 
 /**
  * Activity to obtain tonight's settings. Here is where the user can preset who to call and text beforehand.

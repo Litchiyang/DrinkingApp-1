@@ -1,14 +1,11 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,8 +17,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,13 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.User;
 
 

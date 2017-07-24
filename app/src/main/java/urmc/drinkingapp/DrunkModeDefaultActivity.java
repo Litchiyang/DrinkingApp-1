@@ -13,13 +13,9 @@ import android.widget.Toast;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
-import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.DrinkingAppCollection;
+import urmc.drinkingapp.pages.MapsActivity;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.app.Activity;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;

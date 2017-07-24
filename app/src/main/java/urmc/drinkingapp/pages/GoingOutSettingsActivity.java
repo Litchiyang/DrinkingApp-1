@@ -1,18 +1,16 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import java.util.Collection;
-
 import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.DrunkModeDefaultActivity;
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.PhoneNumberCollection;
 import urmc.drinkingapp.model.PhoneNumbers;
 

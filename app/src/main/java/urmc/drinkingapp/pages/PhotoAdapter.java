@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+
+import urmc.drinkingapp.R;
 
 /**
  * Created by Alessandro on 3/26/17.

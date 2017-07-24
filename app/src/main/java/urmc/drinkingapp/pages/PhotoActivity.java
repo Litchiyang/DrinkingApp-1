@@ -1,6 +1,5 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import java.io.File;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+import urmc.drinkingapp.R;
 
 /**
  * Searchable activity where the search is performed. The query from the SearchView is sent to this activity that consequently

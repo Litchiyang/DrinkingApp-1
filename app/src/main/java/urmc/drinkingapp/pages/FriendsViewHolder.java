@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 

@@ -1,6 +1,5 @@
 package urmc.drinkingapp;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,14 +22,11 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +34,9 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import urmc.drinkingapp.pages.FriendsViewPagerActivity;
+import urmc.drinkingapp.pages.GoingOutSettingsActivity;
+import urmc.drinkingapp.pages.ProfileActivity;
 
 /**
  * Main Activity that is displayed after a successful login into the app. From this activity it is possible

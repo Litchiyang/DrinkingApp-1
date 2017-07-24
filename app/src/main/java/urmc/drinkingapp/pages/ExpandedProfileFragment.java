@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 
 import android.app.ProgressDialog;
@@ -32,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.List;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 

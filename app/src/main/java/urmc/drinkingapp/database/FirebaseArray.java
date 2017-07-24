@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.database;
 
 /**
  * Created by Alessandro on 3/15/17.
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * This class implements an array-like collection on top of a Firebase location.
  */
-class FirebaseArray implements ChildEventListener, ValueEventListener {
+public class FirebaseArray implements ChildEventListener, ValueEventListener {
     private Query mQuery;
     private ChangeEventListener mListener;
     private List<DataSnapshot> mSnapshots = new ArrayList<>();

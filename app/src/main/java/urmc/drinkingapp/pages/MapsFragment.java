@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import urmc.drinkingapp.R;
 
 
 /**

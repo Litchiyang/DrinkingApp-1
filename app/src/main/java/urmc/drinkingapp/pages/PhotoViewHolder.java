@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+
+import urmc.drinkingapp.R;
 
 /**
  * Created by Alessandro on 3/26/17.

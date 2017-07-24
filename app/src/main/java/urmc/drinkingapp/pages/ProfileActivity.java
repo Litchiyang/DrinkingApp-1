@@ -1,9 +1,10 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toast;
+
+import urmc.drinkingapp.R;
 
 /**
  * Activity hosting the OnlineProfileFragment and the OnlineEditProfileFragment

@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 /**
  * Created by Alessandro on 3/15/17.
@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import urmc.drinkingapp.database.ChangeEventListener;
+import urmc.drinkingapp.database.FirebaseArray;
 import urmc.drinkingapp.model.User;
 
 /**

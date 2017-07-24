@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 
 import android.os.Bundle;
@@ -8,7 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.app.Fragment;
-import urmc.drinkingapp.database.*;
+
+import urmc.drinkingapp.R;
 
 
 import java.util.List;

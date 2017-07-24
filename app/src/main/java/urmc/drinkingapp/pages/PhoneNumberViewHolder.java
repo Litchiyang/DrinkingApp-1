@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.PhoneNumbers;
 
 /**

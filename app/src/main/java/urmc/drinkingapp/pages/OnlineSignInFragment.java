@@ -1,4 +1,4 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages;
 
 
 import android.app.ProgressDialog;
@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.DrunkTextSettingsActivity;
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
