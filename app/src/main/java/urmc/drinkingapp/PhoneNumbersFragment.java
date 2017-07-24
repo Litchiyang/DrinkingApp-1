@@ -47,22 +47,22 @@ public class PhoneNumbersFragment extends Fragment {
         List<PhoneNumbers> numbers = PhoneNumberCollection.get().getCollection();
         mPhoneNumberRecyclerView.setAdapter(new PhoneNumberAdapter(numbers));
 
-        updateUI();
+        //updateUI();
 
         return view;
     }
-
-    public void updateUI() {
-        List<PhoneNumbers> pn = mCollection.getCollection();
-
-        if(mAdapter == null) {
-            mAdapter = new PhoneNumberAdapter(pn);
-            mPhoneNumberRecyclerView.setAdapter(mAdapter);
-        }
-        else {
-            mAdapter.setPhoneNumber(pn);
-        }
-    }
+//
+//    public void updateUI() {
+//        List<PhoneNumbers> pn = mCollection.getCollection();
+//
+//        if(mAdapter == null) {
+//            mAdapter = new PhoneNumberAdapter(pn);
+//            mPhoneNumberRecyclerView.setAdapter(mAdapter);
+//        }
+//        else {
+//            mAdapter.setPhoneNumber(pn);
+//        }
+//    }
 
 
 

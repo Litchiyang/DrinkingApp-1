@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,18 +20,29 @@ public class PhoneNumberViewHolder extends RecyclerView.ViewHolder{
 
     private TextView mNumberView;
 
-    private PhoneNumbers mPhoneNumber;
+    protected static PhoneNumbers mPhoneNumber;
+    private RelativeLayout mRecyclerView;
+    private int click;
 
     //view holder
     public PhoneNumberViewHolder(View v) {
         super(v);
         mNumberView = (TextView)v.findViewById(R.id.view_phone_numbers);
+        mRecyclerView = (RelativeLayout) v.findViewById(R.id.relative_layout_recyler_view);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle args = new Bundle();
-                args.putString("PHONENUMBER", mPhoneNumber.getNumber());
+                click++;
+
+                if(click%2 == 1) {
+                    args.putString("PHONENUMBER", mPhoneNumber.getNumber());
+                    mRecyclerView.setSelected(true);
+                } else {
+                    args.putString("PHONENUMBER", "");
+                    mRecyclerView.setSelected(false);
+                }
             }
         });
     }
@@ -39,7 +51,7 @@ public class PhoneNumberViewHolder extends RecyclerView.ViewHolder{
     public void bindPhoneNumbers(PhoneNumbers numbers) {
         mPhoneNumber = numbers;
         mNumberView.setText(numbers.getNumber());
-        Log.d("YANG", "bindPhoneNumbers: " + numbers.getNumber());
+
     }
 
 }

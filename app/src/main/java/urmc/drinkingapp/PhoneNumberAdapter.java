@@ -46,8 +46,4 @@ public class PhoneNumberAdapter extends RecyclerView.Adapter<PhoneNumberViewHold
         holder.bindPhoneNumbers(mNumber.get(position));
     }
 
-    public void setPhoneNumber(List<PhoneNumbers> pn) {
-        mNumber = pn;
-        notifyDataSetChanged();
-    }
 }

@@ -37,35 +37,35 @@ public class GoingOutSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_going_out_settings);
 
         //Set the buddy checkbox
- //       mBuddyCheckBox = (CheckBox)findViewById(R.id.check_box_bubby_settings);
+        mBuddyCheckBox = (CheckBox)findViewById(R.id.check_box_bubby_settings);
 
-//        mBuddyCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if(isChecked){
-//                    //sets the UserFragment
-//                    mFragment = new FriendsFragment();
-//                    FragmentManager fm = getSupportFragmentManager();
-//                    fm.beginTransaction()
-//                            .add(R.id.frame_layout_friends, mFragment)
-//                            .commit();
-//                } else {
-//
-//                }
-//
-//            }
-//        });
+        mBuddyCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    //sets the UserFragment
+                    mBuddyFragment = new FriendsFragment();
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .add(R.id.frame_layout_friends, mBuddyFragment)
+                            .commit();
+                } else {
+
+                }
+
+            }
+        });
 
         mTextCheckBox = (CheckBox)findViewById(R.id.check_box_text_settings);
         mCallCheckBox = (CheckBox)findViewById(R.id.check_box_call_settings);
 
-//        //Set the BuddyFragment
-//        mBuddyFragment = new FriendsFragment();
-//        FragmentManager fm = getSupportFragmentManager();
-//        fm.beginTransaction()
-//                .add(R.id.frame_layout_friends, mBuddyFragment)
-//                .commit();
+        //Set the BuddyFragment
+        mBuddyFragment = new FriendsFragment();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .add(R.id.frame_layout_friends, mBuddyFragment)
+                .commit();
 
 
 
@@ -84,8 +84,6 @@ public class GoingOutSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhoneNumbers mNumber = new PhoneNumbers();
                 mNumber.setNumber(mPhoneNumber.getText().toString());
-                Toast toast = Toast.makeText(getApplicationContext(), "BUTTON" + mPhoneNumber.getText().toString(), Toast.LENGTH_LONG);
-                toast.show();
                 PhoneNumberCollection.get().addNumbers(mNumber);
             }
         });
@@ -106,8 +104,6 @@ public class GoingOutSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhoneNumbers mNumber = new PhoneNumbers();
                 mNumber.setNumber(mCall.getText().toString());
-                Toast toast = Toast.makeText(getApplicationContext(), "BUTTON" + mCall.getText().toString(), Toast.LENGTH_LONG);
-                toast.show();
                 PhoneNumberCollection.get().addNumbers(mNumber);
             }
         });
@@ -117,9 +113,9 @@ public class GoingOutSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String presetPhoneNumber = mPhoneNumber.getText().toString();
+                String presetPhoneNumber = PhoneNumberViewHolder.mPhoneNumber.getNumber();
                 String presetText = mText.getText().toString();
-                String presetCall = mCall.getText().toString();
+                String presetCall = PhoneNumberViewHolder.mPhoneNumber.getNumber();
 
                 Intent i = new Intent(GoingOutSettingsActivity.this, DrunkModeDefaultActivity.class);
 

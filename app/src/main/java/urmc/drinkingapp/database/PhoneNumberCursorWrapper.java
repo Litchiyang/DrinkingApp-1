@@ -33,7 +33,6 @@ public class PhoneNumberCursorWrapper extends CursorWrapper {
 
 
         PhoneNumbers n = new PhoneNumbers(id);
-        Log.d("YANG1", "getPhoneNumber: " + number);
         n.setNumber(number);
 
         return n;

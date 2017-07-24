@@ -76,7 +76,7 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
 
         textButton = (FancyButton) findViewById(R.id.button_text_default_drunk_mode);
 
-        if(useCall) {
+        if(useText) {
             //Send text message when button is pressed
             textButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,7 +93,7 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
 
         cabButton = (FancyButton) findViewById(R.id.button_cab_default_drunk_mode);
 
-        if(useText) {
+        if(useCall) {
 
             //if no information is preset ask user to set it
             //check for permission to call --> if there is no permission then ask user for permission
