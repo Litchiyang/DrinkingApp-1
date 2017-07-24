@@ -13,45 +13,45 @@
     tools:context="urmc.drinkingapp.MainActivity">
 
 
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/relative_layout_buddy">-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relative_layout_buddy">
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/linear_layout_buddy"-->
-            <!--android:orientation="horizontal">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linear_layout_buddy"
+            android:orientation="horizontal">
 
-            <!--<CheckBox-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:id="@+id/check_box_bubby_settings"/>-->
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/check_box_bubby_settings"/>
 
 
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Use buddy System"/>-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Use buddy System"/>
 
-        <!--</LinearLayout>-->
+        </LinearLayout>
 
-        <!--<FrameLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="200dp"-->
-            <!--android:layout_below="@id/linear_layout_buddy"-->
-            <!--android:id="@+id/frame_layout_friends"/>-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@id/linear_layout_buddy"
+            android:id="@+id/frame_layout_friends"/>
 
-    <!--</RelativeLayout>-->
+    </RelativeLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/relative_layout_text"
-        android:orientation="vertical">
-        <!--android:layout_below="@id/relative_layout_buddy">-->
+        android:orientation="vertical"
+        android:layout_below ="@id/relative_layout_buddy">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,7 +140,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:id="@+id/frame_layout_out_settings_calls"/>
 
 
