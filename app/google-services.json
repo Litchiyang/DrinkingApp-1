@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "17625408337",
+    "firebase_url": "https://drinkingapp-8eb08.firebaseio.com",
+    "project_id": "drinkingapp-8eb08",
+    "storage_bucket": "drinkingapp-8eb08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17625408337:android:1c4fb34ac1af2361",
+        "android_client_info": {
+          "package_name": "urmc.drinkingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "17625408337-5b310hkeeuan100638m16h6usgkvt4gs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "urmc.drinkingapp",
+            "certificate_hash": "38d1e94c134027447abb23b447c358c784eb462b"
+          }
+        },
+        {
+          "client_id": "17625408337-874hd3csh6ar3kf4n9g6l7299njtmq4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEt1xJ-0eOMJVnmqPZZzifuWzxk27aX1s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "17625408337-874hd3csh6ar3kf4n9g6l7299njtmq4j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
