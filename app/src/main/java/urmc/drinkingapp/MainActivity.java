@@ -234,6 +234,10 @@ public class MainActivity extends AppCompatActivity {
      * The function stores the number of drunk texts that were sent on a given day and stores this information in a hashMap that is passed
      * displayGraph() function to show this information in a nice graph.
      */
+    @Override
+    public void onBackPressed() {
+    }
+
     public void readTexts() {
         //get parameters from .txt file stored in assets folder
         HashMap<String, Float> params = readParameters();

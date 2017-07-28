@@ -16,6 +16,10 @@ public class DrunkTextSettingsActivity extends AppCompatActivity {
     private FancyButton mNo;
 
     @Override
+    public void onBackPressed() {
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drunk_text_settings);
