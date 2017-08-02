@@ -1,7 +1,5 @@
 package urmc.drinkingapp.pages;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -10,7 +8,7 @@ import android.widget.TextView;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.DrinkingAppCollection;
+import urmc.drinkingapp.database.obsolete.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
 /**

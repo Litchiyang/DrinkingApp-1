@@ -14,10 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,7 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.DrunkTextSettingsActivity;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.DrinkingAppCollection;
+import urmc.drinkingapp.database.obsolete.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
@@ -190,8 +187,6 @@ public class OnlineSignInFragment extends Fragment {
                                     }
                                 }
                             });
-
-
 
                 }
             }

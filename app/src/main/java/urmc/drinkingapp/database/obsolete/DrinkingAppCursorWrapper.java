@@ -1,4 +1,4 @@
-package urmc.drinkingapp.database;
+package urmc.drinkingapp.database.obsolete;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;

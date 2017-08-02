@@ -461,7 +461,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     //If the user gave permission then proceed to read SMS and compute the drunk texting behavior
     //if the user didn't give permission then show rationale why we need permission
     @Override
