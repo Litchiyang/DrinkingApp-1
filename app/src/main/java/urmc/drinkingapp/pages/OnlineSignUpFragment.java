@@ -27,9 +27,6 @@ import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.User;
 
-import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
-import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
-
 
 /**
  * Fragment to sign up into the app. Creates a new user for the online database and creates the firebase authentication credentials.
@@ -154,10 +151,10 @@ public class OnlineSignUpFragment extends Fragment {
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValidEmail(mEmailEditText.getText())){
+                if (mEmailEditText.getText().length() < 6){
                     Toast.makeText(getActivity(), "Enter a valid email", Toast.LENGTH_SHORT).show();
                 }
-                else if(isValidPassword(mPasswordEditText.getText())){
+                else if(mPasswordEditText.getText().length()<6){
                     Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
                             Toast.LENGTH_SHORT).show();
                 }
@@ -169,8 +166,15 @@ public class OnlineSignUpFragment extends Fragment {
                     Toast.makeText(getActivity(), "Enter a valid last name",
                             Toast.LENGTH_SHORT).show();
                 }
+                else if (mEmailEditText.getText().length() < 6 &&
+                        mPasswordEditText.getText().length()<6){
+                    Toast.makeText(getActivity(), "Enter valid login information",
+                            Toast.LENGTH_SHORT).show();
+                }
 
                 else{
+
+
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
                     mLoginName = mNameEditText.getText().toString();

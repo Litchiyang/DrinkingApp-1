@@ -493,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Read parameters from .txt file in the assets folder
     public HashMap<String, Float> readParameters(){
-        HashMap<String, Float> params = new HashMap<>();
+        HashMap<String, Float> params = new HashMap<String, Float>();
         //try (BufferedReader br = new BufferedReader(new FileReader("par1.txt"))) {
         try{
             InputStreamReader is = new InputStreamReader(getAssets().open("par1.txt"));

@@ -21,6 +21,7 @@ public class PhoneNumberDatabaseHelper extends SQLiteOpenHelper {
                 + "(_id integer primary key autoincrement, "
                 + PhoneNumberSchema.PhoneNumbersTable.Cols.ID + ", "
                 + PhoneNumberSchema.PhoneNumbersTable.Cols.NUMBER + ")");
+
     }
 
 

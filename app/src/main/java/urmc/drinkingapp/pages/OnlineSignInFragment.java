@@ -14,7 +14,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,11 +27,8 @@ import com.google.firebase.auth.FirebaseUser;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.DrunkTextSettingsActivity;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.obsolete.DrinkingAppCollection;
+import urmc.drinkingapp.database.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
-
-import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
-import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
 
 
 /**
@@ -101,6 +101,8 @@ public class OnlineSignInFragment extends Fragment {
         mAuth.removeAuthStateListener(mAuthListener);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -145,25 +147,31 @@ public class OnlineSignInFragment extends Fragment {
             mPasswordEditText.setText(savedInstanceState.getString("PASSWORD"));
         }
 
+
+
         //onClick listener for the signIn button - checks for valid login information
         //mSignInButton = (Button)view.findViewById(R.id.button_sign_in);
         mSignInButton = (FancyButton)view.findViewById(R.id.button_sign_in);
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (isValidEmail(mEmailEditText.getText())){
+                if (mEmailEditText.getText().length() < 6){
                     Toast.makeText(getActivity(), "Enter a valid email",Toast.LENGTH_SHORT).show();
                 }
-                else if(isValidPassword(mPasswordEditText.getText())){
-                    Toast.makeText(getActivity(), "Enter a password more than 6 characters",
+                else if(mPasswordEditText.getText().length()<6){
+                    Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
                             Toast.LENGTH_SHORT).show();
                 }
-
+                else if (mEmailEditText.getText().length() < 6 &&
+                        mPasswordEditText.getText().length()<6){
+                    Toast.makeText(getActivity(), "Enter valid login information",
+                            Toast.LENGTH_SHORT).show();
+                }
                 //check for valid user and start the profile activity
                 else{
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
+
 
                     showProgressDialog();
 
@@ -173,7 +181,7 @@ public class OnlineSignInFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-//                                    hideProgressDialog();
+                                    hideProgressDialog();
 
                                     // If sign in fails, display a message to the user. If sign in succeeds
                                     // the auth state listener will be notified and logic to handle the
@@ -193,6 +201,9 @@ public class OnlineSignInFragment extends Fragment {
                                     }
                                 }
                             });
+
+
+
                 }
             }
         });
@@ -210,7 +221,6 @@ public class OnlineSignInFragment extends Fragment {
 
         return view;
     }
-
 
     
 
