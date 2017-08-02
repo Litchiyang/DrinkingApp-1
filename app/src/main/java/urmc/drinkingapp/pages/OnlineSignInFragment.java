@@ -30,6 +30,9 @@ import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
+import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
+import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
+
 
 /**
  * Fragment to sign in into the app. Uses online authentication against the firebase database
@@ -53,7 +56,6 @@ public class OnlineSignInFragment extends Fragment {
     private FancyButton mTwitterSignIn;
     private FancyButton mGoogleSignIn;
     private FancyButton mFacebookSignIn;
-
 
     //email and password for the user logging in
     private String mLoginEmail;
@@ -94,14 +96,11 @@ public class OnlineSignInFragment extends Fragment {
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-
     @Override
     public void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(mAuthListener);
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,7 +125,6 @@ public class OnlineSignInFragment extends Fragment {
             }
         };
 
-
         //wiring up widgets
         mEmailEditText = (EditText)view.findViewById(R.id.edit_text_enter_email);
         mPasswordEditText = (EditText)view.findViewById(R.id.edit_text_enter_password);
@@ -140,14 +138,11 @@ public class OnlineSignInFragment extends Fragment {
                 .requestEmail()
                 .build();
 
-
         //getting persisted state
         if (savedInstanceState!=null){
             mEmailEditText.setText(savedInstanceState.getString("EMAIL"));
             mPasswordEditText.setText(savedInstanceState.getString("PASSWORD"));
         }
-
-
 
         //onClick listener for the signIn button - checks for valid login information
         //mSignInButton = (Button)view.findViewById(R.id.button_sign_in);
@@ -155,24 +150,18 @@ public class OnlineSignInFragment extends Fragment {
         mSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEmailEditText.getText().length() < 6){
+                if (!isValidEmail(mEmailEditText.getText())){
                     Toast.makeText(getActivity(), "Enter a valid email",Toast.LENGTH_SHORT).show();
                 }
-                else if(mPasswordEditText.getText().length()<6){
+                else if(!isValidPassword(mPasswordEditText.getText())){
                     Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
                             Toast.LENGTH_SHORT).show();
                 }
-                else if (mEmailEditText.getText().length() < 6 &&
-                        mPasswordEditText.getText().length()<6){
-                    Toast.makeText(getActivity(), "Enter valid login information",
-                            Toast.LENGTH_SHORT).show();
-                }
+
                 //check for valid user and start the profile activity
                 else{
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
-
-
                     showProgressDialog();
 
                     //Try to authenticate the user's credentials

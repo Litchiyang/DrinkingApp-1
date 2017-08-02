@@ -27,6 +27,9 @@ import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.User;
 
+import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
+import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
+
 
 /**
  * Fragment to sign up into the app. Creates a new user for the online database and creates the firebase authentication credentials.
@@ -99,8 +102,6 @@ public class OnlineSignUpFragment extends Fragment {
         }
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -126,36 +127,28 @@ public class OnlineSignUpFragment extends Fragment {
             }
         };
 
-        //mCancelButton = (Button)view.findViewById(R.id.button_cancel_sign_up);
         mCancelButton = (FancyButton) view.findViewById(R.id.button_cancel_sign_up);
         mNameEditText = (EditText)view.findViewById(R.id.edit_text_name_sign_up);
         mLastNameEditText = (EditText)view.findViewById(R.id.edit_text_last_name_sign_up);
         mEmailEditText = (EditText)view.findViewById(R.id.edit_text_enter_email_sign_up);
         mPasswordEditText = (EditText)view.findViewById(R.id.edit_text_enter_password_sign_up);
-
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.SignUpCancel();
-                /*
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.frame_layout_login_activity,new LoginFragment())
-                        .commit();
-                        */
             }
         });
 
         //Check for valid information
-        //mSignUpButton = (Button)view.findViewById(R.id.button_sign_up_sing_up);
         mSignUpButton = (FancyButton) view.findViewById(R.id.button_sign_up_sing_up);
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mEmailEditText.getText().length() < 6){
+                if (!isValidEmail(mEmailEditText.getText())){
                     Toast.makeText(getActivity(), "Enter a valid email", Toast.LENGTH_SHORT).show();
                 }
-                else if(mPasswordEditText.getText().length()<6){
-                    Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
+                else if(!isValidPassword(mPasswordEditText.getText())){
+                    Toast.makeText(getActivity(), "Enter a valid password",
                             Toast.LENGTH_SHORT).show();
                 }
                 else if(mNameEditText.getText().length()<1){
@@ -166,15 +159,8 @@ public class OnlineSignUpFragment extends Fragment {
                     Toast.makeText(getActivity(), "Enter a valid last name",
                             Toast.LENGTH_SHORT).show();
                 }
-                else if (mEmailEditText.getText().length() < 6 &&
-                        mPasswordEditText.getText().length()<6){
-                    Toast.makeText(getActivity(), "Enter valid login information",
-                            Toast.LENGTH_SHORT).show();
-                }
 
                 else{
-
-
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
                     mLoginName = mNameEditText.getText().toString();
@@ -205,12 +191,9 @@ public class OnlineSignUpFragment extends Fragment {
                                         getActivity().startActivity(intent);
                                         getActivity().finish();
                                     }
-
                                     // ...
                                 }
                             });
-
-
                 }
             }
         });
