@@ -1,4 +1,4 @@
-package urmc.drinkingapp.database;
+package urmc.drinkingapp.database.obsolete;
 
 /**
  * Created by Alessandro on 2/25/17.
