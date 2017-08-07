@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.DrinkingAppCollection;
+import urmc.drinkingapp.database.obsolete.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
 
