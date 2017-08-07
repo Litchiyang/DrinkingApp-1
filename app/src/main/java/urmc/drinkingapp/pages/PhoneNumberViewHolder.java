@@ -19,7 +19,7 @@ import urmc.drinkingapp.model.PhoneNumbers;
 
 public class PhoneNumberViewHolder extends RecyclerView.ViewHolder{
 
-    private TextView mNumberView;
+    public static TextView mNumberView;
 
     protected static PhoneNumbers mPhoneNumber;
     private RelativeLayout mRecyclerView;
@@ -31,21 +31,21 @@ public class PhoneNumberViewHolder extends RecyclerView.ViewHolder{
         mNumberView = (TextView)v.findViewById(R.id.view_phone_numbers);
         mRecyclerView = (RelativeLayout) v.findViewById(R.id.relative_layout_recyler_view);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle args = new Bundle();
-                click++;
-
-                if(click%2 == 1) {
-                    args.putString("PHONENUMBER", mPhoneNumber.getNumber());
-                    mRecyclerView.setSelected(true);
-                } else {
-                    args.putString("PHONENUMBER", "");
-                    mRecyclerView.setSelected(false);
-                }
-            }
-        });
+//        itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Bundle args = new Bundle();
+//                click++;
+//
+//                if(click%2 == 1) {
+//                    args.putString("PHONENUMBER", mPhoneNumber.getNumber());
+//                    mRecyclerView.setSelected(true);
+//                } else {
+//                    args.putString("PHONENUMBER", "");
+//                    mRecyclerView.setSelected(false);
+//                }
+//            }
+//        });
     }
 
     //Bind phone numbers
