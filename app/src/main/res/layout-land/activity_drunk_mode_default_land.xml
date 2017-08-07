@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="urmc.drinkingapp.DrunkModeDefaultActivity">
+
+    <!--slider-->
+    <ng.max.slideview.SlideView
+        android:id="@+id/switch_drunk_mode_default_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:buttonBackgroundColor="@color/White"
+        app:slideBackgroundColor="@color/colorBlueSlider"
+        app:slideText="@string/drunk_mode_off_string"
+        app:slideTextColor="@color/White"
+        app:animateSlideText="true"
+        app:reverseSlide="true"
+        app:strokeColor="@color/White"/>
+
+    <!--location button-->
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/button_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="85dp"
+        android:paddingRight="85dp"
+        android:paddingTop="10dp"
+
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/colorPinkOrange"
+        fancy:fb_focusColor="@color/colorPinkOrangeToggle"
+        fancy:fb_radius="30dp"
+        fancy:fb_text="@string/location_string"
+        fancy:fb_textColor="#FFFFFF"
+
+        android:layout_marginBottom="20dp"
+
+        android:layout_above="@+id/button_text_default_drunk_mode"
+        android:layout_alignEnd="@+id/button_text_default_drunk_mode" />
+
+    <!--text button-->
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/button_text_default_drunk_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingStart="100dp"
+        android:paddingEnd="100dp"
+        android:paddingTop="10dp"
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/colorPinkOrange"
+        fancy:fb_focusColor="@color/colorPinkOrangeToggle"
+        fancy:fb_radius="30dp"
+        fancy:fb_text="@string/text_string"
+        fancy:fb_textColor="#FFFFFF"
+
+
+        android:layout_marginBottom="17dp"
+
+
+        android:layout_above="@+id/button_cab_default_drunk_mode"
+        android:layout_alignEnd="@+id/button_cab_default_drunk_mode" />
+
+    <!--call a cab button-->
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/button_cab_default_drunk_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="80dp"
+        android:paddingRight="80dp"
+        android:paddingTop="10dp"
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/colorPinkOrange"
+        fancy:fb_focusColor="@color/colorPinkOrangeToggle"
+        fancy:fb_radius="30dp"
+        fancy:fb_text="@string/cab_string"
+        fancy:fb_textColor="#FFFFFF"
+
+        android:layout_marginBottom="12dp"
+
+
+        android:layout_above="@+id/button_emergency_default_drunk_mode"
+        android:layout_centerHorizontal="true" />
+
+
+
+    <!--emergency button-->
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/button_emergency_default_drunk_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:paddingLeft="80dp"
+        android:paddingRight="80dp"
+        android:paddingTop="15dp"
+        fancy:fb_borderColor="#FFFFFF"
+        fancy:fb_borderWidth="1dp"
+        fancy:fb_defaultColor="@color/colorRed"
+        fancy:fb_focusColor="@color/colorPinkOrangeToggle"
+        fancy:fb_radius="60dp"
+        fancy:fb_text="@string/emergency_string"
+        fancy:fb_textColor="#FFFFFF"
+
+        android:layout_marginBottom="10dp"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
+
+
+
+</RelativeLayout>
