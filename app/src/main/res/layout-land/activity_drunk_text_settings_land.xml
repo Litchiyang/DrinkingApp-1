@@ -13,6 +13,7 @@
     tools:context="urmc.drinkingapp.DrunkTextSettingsActivity">
 
 
+
     <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/button_text_settings_yes"
         android:layout_width="100dp"
