@@ -35,7 +35,7 @@ import java.util.Locale;
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
 import urmc.drinkingapp.pages.FriendsViewPagerActivity;
-import urmc.drinkingapp.pages.GoingOutSettingsActivity;
+import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
 import urmc.drinkingapp.pages.ProfileActivity;
 
 /**

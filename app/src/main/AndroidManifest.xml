@@ -92,7 +92,7 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".pages.SettingsActivity" />
         <activity android:name=".pages.PhotoActivity" />
-        <activity android:name=".pages.GoingOutSettingsActivity" />
+        <activity android:name=".pages.GoingOutSettings.GoingOutSettingsActivity" />
         <activity android:name=".DrunkTextSettingsActivity"></activity>
     </application>
 

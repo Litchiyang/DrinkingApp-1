@@ -154,10 +154,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-
-
-
-
         //Get the location of the buddy if available
         mBuddyReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

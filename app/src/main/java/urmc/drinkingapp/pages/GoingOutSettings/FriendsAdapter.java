@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.GoingOutSettings;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import java.util.List;
 
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.User;
+import urmc.drinkingapp.pages.FriendsViewHolder;
 
 /**
  * Created by Alessandro on 3/10/17.
@@ -43,7 +44,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mItems == null ? 0: mItems.size();
     }
 
     public void setUsers(List<User> users){

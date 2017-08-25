@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.obsolete.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
 /**
@@ -28,7 +27,6 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
     public FancyButton mAddBuddyButton;
 
     private User mUser;
-    private DrinkingAppCollection mCollection;
 
     //constructor - wires up all the widgets
     public FriendsViewHolder(View view){

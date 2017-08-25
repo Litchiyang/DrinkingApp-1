@@ -53,6 +53,8 @@
     <string name="take_picture_string">Take a Photo</string>
     <string name="add_buddy_string">Buddy Up</string>
     <string name="title_activity_going_out_settings">GoingOutSettingsActivity</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="set_text_message">Set text message</string>
 
 
 </resources>

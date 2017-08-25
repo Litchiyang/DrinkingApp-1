@@ -21,9 +21,8 @@ import java.util.UUID;
 //Object characterizing a user in the app
 public class User {
 
-    //attributes of a user
     private String mFullname;
-    private String mPassword;
+    private String mLastname;
     private String mEmail;
     private String mProfilePic = "none";
     public Double Lat;
@@ -69,14 +68,6 @@ public class User {
 
     public void setFullname(String mFullname) {
         this.mFullname = mFullname;
-    }
-
-    public String getPassword() {
-        return mPassword;
-    }
-
-    public void setPassword(String mPassword) {
-        this.mPassword = mPassword;
     }
 
     public String getEmail() {

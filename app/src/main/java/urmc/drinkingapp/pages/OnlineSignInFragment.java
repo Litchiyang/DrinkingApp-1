@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.DrunkTextSettingsActivity;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.obsolete.DrinkingAppCollection;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
@@ -180,7 +179,6 @@ public class OnlineSignInFragment extends Fragment {
 
                                     else{
                                         Intent intent = new Intent(getActivity(), DrunkTextSettingsActivity.class);
-                                        DrinkingAppCollection.mMainUser = mLoginUser;
                                         //intent.putExtra("EMAIL", mLoginEmail);
                                         //intent.putExtra("PASSWORD", mLoginPassword);
                                         startActivity(intent);
