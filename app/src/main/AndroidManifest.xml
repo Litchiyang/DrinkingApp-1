@@ -41,9 +41,9 @@
 
         <activity
             android:name=".pages.EditProfileActivity"
-            android:parentActivityName=".pages.ProfileActivity" />
+            android:parentActivityName=".pages.Profile.ProfileActivity" />
         <activity
-            android:name=".pages.ProfileActivity"
+            android:name=".pages.Profile.ProfileActivity"
             android:parentActivityName=".MainActivity" />
 
         <!--
@@ -70,7 +70,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".pages.FriendsViewPagerActivity">
+        <activity android:name=".pages.Friends.FriendsViewPagerActivity">
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".FriendsSearchableActivity" />

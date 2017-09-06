@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Friends;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;

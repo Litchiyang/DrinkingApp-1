@@ -34,9 +34,9 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
-import urmc.drinkingapp.pages.FriendsViewPagerActivity;
+import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
-import urmc.drinkingapp.pages.ProfileActivity;
+import urmc.drinkingapp.pages.Profile.ProfileActivity;
 
 /**
  * Main Activity that is displayed after a successful login into the app. From this activity it is possible

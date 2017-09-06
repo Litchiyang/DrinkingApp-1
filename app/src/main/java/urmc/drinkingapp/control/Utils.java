@@ -13,7 +13,6 @@ public class Utils {
 
     //method to fix pictures to be displayed in the app
     public static Bitmap getScaledBitmap(String path, int width, int height) {
-
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);

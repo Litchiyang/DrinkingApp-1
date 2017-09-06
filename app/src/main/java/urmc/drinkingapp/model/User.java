@@ -1,8 +1,5 @@
 package urmc.drinkingapp.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
@@ -20,11 +17,13 @@ import java.util.UUID;
 
 //Object characterizing a user in the app
 public class User {
-
-    private String mFullname;
+    private String mFirstname;
     private String mLastname;
+    private String mNickname;
     private String mEmail;
+    private String mPhoneNumber;
     private String mProfilePic = "none";
+
     public Double Lat;
     public Double Lon;
 
@@ -35,19 +34,6 @@ public class User {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    //not currently being used
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("email", mEmail);
-        result.put("fullname", mFullname);
-        result.put("profilePic", mProfilePic);
-        result.put("Lat", Lat);
-        result.put("Lon", Lon);
-
-        return result;
-    }
-
     /*
     //constructor
     public User(){
@@ -55,7 +41,6 @@ public class User {
         mProfilePic = "none";
 
     }*/
-
     /* Getters and Setters*/
 
     public User(UUID id){
@@ -63,11 +48,11 @@ public class User {
     }
 
     public String getFullname() {
-        return mFullname;
+        return mFirstname;
     }
 
     public void setFullname(String mFullname) {
-        this.mFullname = mFullname;
+        this.mFirstname = mFullname;
     }
 
     public String getEmail() {

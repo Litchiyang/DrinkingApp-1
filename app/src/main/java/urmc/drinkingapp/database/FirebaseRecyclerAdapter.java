@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.database;
 
 /**
  * Created by Alessandro on 3/15/17.
@@ -21,8 +21,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import urmc.drinkingapp.database.ChangeEventListener;
-import urmc.drinkingapp.database.FirebaseArray;
 import urmc.drinkingapp.model.User;
 
 /**

@@ -34,9 +34,7 @@ public class DrunkTextSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent i = new Intent(DrunkTextSettingsActivity.this, MainActivity.class);
-
                 i.putExtra("ANALYZETEXT", 1);
-
                 startActivity(i);
                 finish();
             }
@@ -47,9 +45,7 @@ public class DrunkTextSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent i = new Intent(DrunkTextSettingsActivity.this, MainActivity.class);
-
                 i.putExtra("ANALYZETEXT", 0);
-
                 startActivity(i);
                 finish();
             }

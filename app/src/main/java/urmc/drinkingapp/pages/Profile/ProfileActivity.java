@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Profile;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;

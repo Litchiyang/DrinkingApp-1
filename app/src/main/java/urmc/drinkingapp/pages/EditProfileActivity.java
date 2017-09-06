@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.pages.Profile.OnlineEditProfileFragment;
 
 /**
  * Activity hosting the OnlineEditProfile Fragment

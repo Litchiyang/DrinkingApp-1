@@ -16,10 +16,11 @@
         android:id="@+id/text_view_app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:text="BOTCUS"
         android:textSize="45dp"
-        android:text="BOTCHUS"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 
     <mehdi.sakout.fancybuttons.FancyButton

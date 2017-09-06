@@ -12,13 +12,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.control.DAOs.FriendsDAO;
 
 public class GoingOutSettingsActivity extends AppCompatActivity {
 
     private FancyButton mAddNumber;
     private FancyButton mAddCall;
-    private FriendsDAO mFriendsDAO;
     public DatabaseReference mFriendsDatabase;
 
     //private DrinkingAppCollection mCollection;

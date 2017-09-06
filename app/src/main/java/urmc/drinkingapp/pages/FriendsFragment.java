@@ -27,6 +27,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.database.FirebaseRecyclerAdapter;
 import urmc.drinkingapp.model.User;
 
 /**

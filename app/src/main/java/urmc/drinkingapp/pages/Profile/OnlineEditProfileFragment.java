@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Profile;
 
 
 import android.content.Context;
@@ -39,6 +39,7 @@ import java.io.InputStream;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.User;
+import urmc.drinkingapp.pages.PhotoActivity;
 
 
 /**
