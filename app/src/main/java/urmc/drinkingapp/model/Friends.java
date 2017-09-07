@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- * Created by Berto on 2017/9/5.
+ * List of friends for a user in the friends tree
  */
 
 public class Friends {
@@ -28,4 +28,5 @@ public class Friends {
     public void setFriends(ArrayList<Friend> friends) {
         this.friends = friends;
     }
+
 }

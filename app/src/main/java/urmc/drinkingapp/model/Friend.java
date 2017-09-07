@@ -3,7 +3,7 @@ package urmc.drinkingapp.model;
 import java.util.UUID;
 
 /**
- * Created by Berto on 2017/9/5.
+ * Single friend of a user in the friends tree
  */
 
 public class Friend {

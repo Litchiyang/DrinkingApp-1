@@ -15,7 +15,10 @@ public class LoginAuthentication {
 
     // TODO: 2017/8/2 better rule for password
     public static boolean isValidPassword(CharSequence target) {
+
         return target != null &&
                 target.toString().length() >= 6;
+
+
     }
 }

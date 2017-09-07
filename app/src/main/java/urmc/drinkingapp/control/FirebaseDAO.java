@@ -19,7 +19,7 @@ import urmc.drinkingapp.model.Friends;
 import urmc.drinkingapp.model.User;
 
 /**
- * For easier access to database
+ * For easier access to firebase
  * basic CRUD operations
  */
 
@@ -29,6 +29,7 @@ public class FirebaseDAO {
     private DatabaseReference mDatabase;
     private DatabaseReference mFriendDB;
     private DatabaseReference mUserDB;
+    private User mCurrentUser;
 
     private ArrayList<User> userList;
     private Friends friendList;
@@ -59,6 +60,9 @@ public class FirebaseDAO {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
                     User tempUser = userSnapshot.getValue(User.class);
+                    if(tempUser.getID().toString().equals(mCurrentUser.getID().toString())){
+                        mCurrentUser = tempUser;
+                    }
                     userList.add(tempUser);
                 }
             }
@@ -87,12 +91,7 @@ public class FirebaseDAO {
     }
 
     public User getUser(){
-        for (User user : userList){
-            if(user.getID().toString() == this.id){
-                return user;
-            }
-        }
-        return  null;
+        return  mCurrentUser;
     }
 
     public User getUser(String id){
@@ -129,11 +128,21 @@ public class FirebaseDAO {
 
     public void addFriend(String id){
         //todo create mapping for friends DB
-        mFriendDB.push().setValue(id);
+        ArrayList<Friend> tempList = friendList.getFriends();
+        tempList.add(getFriend(id));
+        friendList.setFriends(tempList);
+        mFriendDB.child(this.id).push().setValue(id);
     }
 
-    public User getFriend(String id){
-        return getUser(id);
+    public Friend getFriend(String id){
+//        ArrayList<Friend> tempList = friendList.getFriends();
+        for(Friend friend : friendList.getFriends()){
+            if (friend.getmID().toString().equals(id)){
+                return friend;
+            }
+        }
+        return null;
     }
+
 
 }
