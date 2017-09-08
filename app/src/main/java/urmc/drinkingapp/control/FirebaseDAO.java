@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import urmc.drinkingapp.model.Friend;
 import urmc.drinkingapp.model.Friends;
@@ -30,18 +31,24 @@ public class FirebaseDAO {
     private DatabaseReference mFriendDB;
     private DatabaseReference mUserDB;
     private User mCurrentUser;
+    private User UserCursor;
 
     private ArrayList<User> userList;
     private Friends friendList;
 
     public FirebaseDAO(){
         this.id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d(TAG,"FirebaseDAO constructor with id "+id.toString());
         initlizeDAO();
     }
 
     public FirebaseDAO(String uuid){
         this.id = uuid;
         initlizeDAO();
+    }
+
+    public String getSelfID(){
+        return this.id;
     }
 
     //a seperate method might be useful in the future
@@ -59,11 +66,12 @@ public class FirebaseDAO {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-                    User tempUser = userSnapshot.getValue(User.class);
-                    if(tempUser.getID().toString().equals(mCurrentUser.getID().toString())){
-                        mCurrentUser = tempUser;
-                    }
-                    userList.add(tempUser);
+                    Log.d(TAG,userSnapshot.getKey());
+//                    User tempUser = userSnapshot.getValue(User.class);
+//                    if(tempUser.getID().equals(mCurrentUser.getID().toString())){
+//                        mCurrentUser = tempUser;
+//                    }
+//                    userList.add(tempUser);
                 }
             }
             @Override
@@ -91,11 +99,22 @@ public class FirebaseDAO {
     }
 
     public User getUser(){
-        return  mCurrentUser;
+        return  getUser(this.id);
     }
 
     public User getUser(String id){
-        return new FirebaseDAO(id).getUser();
+        mUserDB.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UserCursor = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
+        return UserCursor;
     }
 
     public void updateFriend(String userID, Friend friend){
@@ -133,6 +152,14 @@ public class FirebaseDAO {
         friendList.setFriends(tempList);
         mFriendDB.child(this.id).push().setValue(id);
     }
+    
+    public static void updateUser(User user){
+        DatabaseReference mUserDB = FirebaseDatabase.getInstance().getReference().child("users");
+        User u = new User();
+        u.setID("hBFH9BTDd5cuo0YRGLau26KuJBv2");
+        u.setPhoneNumber("2333333");
+        mUserDB.child("hBFH9BTDd5cuo0YRGLau26KuJBv2").setValue(u);
+    }
 
     public Friend getFriend(String id){
 //        ArrayList<Friend> tempList = friendList.getFriends();
@@ -143,6 +170,5 @@ public class FirebaseDAO {
         }
         return null;
     }
-
 
 }

@@ -34,6 +34,7 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import urmc.drinkingapp.control.DataAccess;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
 import urmc.drinkingapp.pages.Profile.ProfileActivity;
@@ -75,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Alessandro Incerto");
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+
+
 
         //Set up initial empty graph
 //        mGraph = (GraphView) findViewById(R.id.main_activity_graph);
@@ -171,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        DataAccess dataAccess = new DataAccess();
+        Log.d("MainActivity","data access created");
 
 
 

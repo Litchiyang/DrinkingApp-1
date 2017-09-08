@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.DataAccess;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
@@ -185,6 +186,7 @@ public class OnlineSignUpFragment extends Fragment {
 
                                         onAuthSuccess(task.getResult().getUser(),mLoginName+" "+mLoginLastName);
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
+
                                         //DrinkingAppCollection.mMainUser = signUpUser;
                                         //intent.putExtra("EMAIL", mLoginEmail);
                                         //intent.putExtra("PASSWORD", mLoginPassword);
@@ -198,7 +200,7 @@ public class OnlineSignUpFragment extends Fragment {
             }
         });
 
-
+        DataAccess.updateUser(null);
 
         return view;
     }
@@ -210,11 +212,13 @@ public class OnlineSignUpFragment extends Fragment {
 
     // [START basic_write]
     private void writeNewUser(String userId, String name, String email) {
-        User user = new User();
-        user.setEmail(email);
-        user.setFullname(name);
-
-        mDatabase.child("users").child(userId).setValue(user);
+        User newUser = new User();
+        newUser.setID(userId);
+        newUser.setFirstname(mLoginName);
+        newUser.setLastname(mLoginLastName);
+        newUser.setEmail(mLoginEmail);
+        newUser.setPhoneNumber("2333333");
+        DataAccess.updateUser(newUser);
     }
     // [END basic_write]
 

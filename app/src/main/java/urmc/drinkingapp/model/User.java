@@ -19,38 +19,26 @@ import java.util.UUID;
 public class User {
     private String mFirstname;
     private String mLastname;
-    private String mNickname;
     private String mEmail;
     private String mPhoneNumber;
     private String mProfilePic = "none";
 
-    public Double Lat;
-    public Double Lon;
+    private Double Lat;
+    private Double Lon;
 
-    private UUID mID;
-    public static boolean firstTime = true;
+    private String mID;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    /*
-    //constructor
-    public User(){
-        mID = UUID.randomUUID();
-        mProfilePic = "none";
-
-    }*/
-    /* Getters and Setters*/
-
-    public User(UUID id){
+    public User(String id){
         mID = id;
     }
 
     public String getFullname() {
         return mFirstname;
     }
-
     public void setFullname(String mFullname) {
         this.mFirstname = mFullname;
     }
@@ -58,7 +46,6 @@ public class User {
     public String getEmail() {
         return mEmail;
     }
-
     public void setEmail(String mEmail) {
         this.mEmail = mEmail;
     }
@@ -66,18 +53,52 @@ public class User {
     public String getProfilePic() {
         return mProfilePic;
     }
-
     public void setProfilePic(String mProfilePic) {
         this.mProfilePic = mProfilePic;
     }
 
-    public UUID getID() {
+    public String getID() {
         return mID;
     }
-
-    public void setID(UUID mID) {
+    public void setID(String mID) {
         this.mID = mID;
     }
+
+    public String getFirstname() {
+        return mFirstname;
+    }
+    public void setFirstname(String mFirstname) {
+        this.mFirstname = mFirstname;
+    }
+
+    public String getLastname() {
+        return mLastname;
+    }
+    public void setLastname(String mLastname) {
+        this.mLastname= mLastname;
+    }
+
+    public String getPhoneNumber() {
+        return mPhoneNumber;
+    }
+    public void setPhoneNumber(String mPhoneNumber) {
+        this.mPhoneNumber = mPhoneNumber;
+    }
+
+    public Double getLat() {
+        return Lat;
+    }
+    public void setLat(Double lat) {
+        Lat = lat;
+    }
+
+    public Double getLon() {
+        return Lon;
+    }
+    public void setLon(Double lon) {
+        Lon = lon;
+    }
+
 
 
 }

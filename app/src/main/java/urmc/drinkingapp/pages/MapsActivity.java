@@ -329,10 +329,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             "Error: could not fetch user.",
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    mUser.Lat = location.getLatitude();
-                    mUser.Lon = location.getLongitude();
-                    mDatabase.child("users").child(getUid()).child("lat").setValue(mUser.Lat);
-                    mDatabase.child("users").child(getUid()).child("lon").setValue(mUser.Lon);
+                    mUser.setLat(location.getLatitude());
+                    mUser.setLon(location.getLongitude());
+                    mDatabase.child("users").child(getUid()).child("lat").setValue(mUser.getLat());
+                    mDatabase.child("users").child(getUid()).child("lon").setValue(mUser.getLon());
 
                 }
             }
