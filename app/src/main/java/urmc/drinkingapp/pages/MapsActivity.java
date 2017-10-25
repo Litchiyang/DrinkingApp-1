@@ -218,7 +218,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                                     LatLng buddyLocation = new LatLng(mBuddyLat, mBuddyLon);
                                                                     marker = mMap.addMarker(new MarkerOptions()
                                                                             .position(buddyLocation)
-                                                                            .title(mBuddy.getFullname()));
+                                                                            .title(mBuddy.getFirstname()+" "+mBuddy.getLastname()));
                                                                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon));
                                                                     marker.showInfoWindow();
                                                                     //mMap.addMarker(new MarkerOptions().position(buddyLocation).title(mBuddy.getFullname())).showInfoWindow();

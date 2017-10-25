@@ -38,6 +38,7 @@ import java.io.InputStream;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.PhotoActivity;
 
@@ -99,7 +100,7 @@ public class OnlineEditProfileFragment extends Fragment {
 
         //wiring up the widgets
         mProfilePicImageView = (ImageView)view.findViewById(R.id.image_view_profile_pic_edit_profile);
-        mFullnameEditText = (EditText)view.findViewById(R.id.edit_text_fullname_profile);
+        mFullnameEditText = (EditText)view.findViewById(R.id.edit_text_firstname_profile);
         mEmailTextView = (TextView) view.findViewById(R.id.edit_text_email_profile);
 
 
@@ -121,7 +122,7 @@ public class OnlineEditProfileFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //setting appropriate information in the widgets according to the user's attributes
-                            mFullnameEditText.setText(mUser.getFullname());
+                            mFullnameEditText.setText(mUser.getFirstname()+" "+mUser.getLastname());
                             mEmailTextView.setText(mUser.getEmail());
                             //setting profile picture
                             String mPath = mUser.getProfilePic();
@@ -159,9 +160,10 @@ public class OnlineEditProfileFragment extends Fragment {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUser.setFullname(mFullnameEditText.getText().toString());
+                FirebaseDAO dao = new FirebaseDAO();
+                mUser.setFirstname(mFullnameEditText.getText().toString());
                 //mDatabase.child("users").child(userId).setValue(mUser);
-                mDatabase.child("users").child(userId).child("fullname").setValue(mUser.getFullname());
+                mDatabase.child("users").child(userId).child("fullname").setValue(mUser.getFirstname());
                 mListener.EditProfileOK();
                 if(!mUser.getProfilePic().equals("none")){uploadPic();}
 

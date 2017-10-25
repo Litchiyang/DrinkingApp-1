@@ -53,7 +53,6 @@ public class OnlineInitialActitivity extends AppCompatActivity implements Online
 
     }
 
-
     //persisting fragment
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -63,6 +62,5 @@ public class OnlineInitialActitivity extends AppCompatActivity implements Online
         }else{
             getSupportFragmentManager().putFragment(outState,"FRAGMENT",mSignUpFragment);
         }
-
     }
 }

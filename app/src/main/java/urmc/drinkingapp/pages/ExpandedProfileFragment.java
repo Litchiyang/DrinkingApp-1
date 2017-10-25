@@ -147,7 +147,7 @@ public class ExpandedProfileFragment extends Fragment {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     //setting appropriate information in the widgets according to the user's attributes
-                    mFullnameTextView.setText(mUser.getFullname());
+                    mFullnameTextView.setText(mUser.getFirstname()+" "+mUser.getLastname());
                     //setting profile picture
                     String mPath = mUser.getProfilePic();
 

@@ -122,7 +122,7 @@ public class OnlineProfileFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //setting appropriate information in the widgets according to the user's attributes
-                            mFullnameTextView.setText(mUser.getFullname());
+                            mFullnameTextView.setText(mUser.getFirstname()+" "+mUser.getLastname());
                             mEmailTextView.setText(mUser.getEmail());
                             //setting profile picture
                             String mPath = mUser.getProfilePic();
@@ -193,7 +193,7 @@ public class OnlineProfileFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //setting appropriate information in the widgets according to the user's attributes
-                            mFullnameTextView.setText(mUser.getFullname());
+                            mFullnameTextView.setText(mUser.getFirstname()+" "+mUser.getLastname());
                             mEmailTextView.setText(mUser.getEmail());
                             //setting profile picture
                             String mPath = mUser.getProfilePic();

@@ -24,7 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.DrunkTextSettingsActivity;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.control.DataAccess;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;

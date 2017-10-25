@@ -13,54 +13,45 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import urmc.drinkingapp.model.Friend;
-import urmc.drinkingapp.model.Friends;
 import urmc.drinkingapp.model.User;
 
 /**
  * For easier access to firebase
- * basic CRUD operations
+ * supports basic CRUD operations
+ * get methods can not be implemented due to firebase does not supporting synchronous request.
  */
 
 public class FirebaseDAO {
     private final static String TAG = "FirebaseDAO";
-    private String id;
-    private DatabaseReference mDatabase;
-    private DatabaseReference mFriendDB;
-    private DatabaseReference mUserDB;
-    private User mCurrentUser;
+    private static DatabaseReference mDatabase;
+    private static DatabaseReference mFriendDB;
+    private static DatabaseReference mUserDB;
     private User UserCursor;
-
+    private String stringCursor;
+    private Friend friendCursor;
+    private User userCursor;
+    private ArrayList<Friend> friendList;
     private ArrayList<User> userList;
-    private Friends friendList;
 
     public FirebaseDAO(){
-        this.id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d(TAG,"FirebaseDAO constructor with id "+id.toString());
+        Log.d(TAG,"Begin FirebaseDAO init");
         initlizeDAO();
-    }
-
-    public FirebaseDAO(String uuid){
-        this.id = uuid;
-        initlizeDAO();
-    }
-
-    public String getSelfID(){
-        return this.id;
+        Log.d(TAG,"FirebaseDAO init finished");
     }
 
     //a seperate method might be useful in the future
+    /*
+     * initialize the things needed for DAO:
+     * getting the reference to User,Friends table
+     */
     private void initlizeDAO(){
-        if(this.id == null){
-            throw new NullPointerException("ID not initalized");
-        }
-        userList = new ArrayList<>();
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mUserDB = mDatabase.child("users");
-        mFriendDB = mDatabase.child("friends").child(this.id);
+        mFriendDB = mDatabase.child("friends");
 
         mUserDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -84,7 +75,6 @@ public class FirebaseDAO {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-                    friendList = userSnapshot.getValue(Friends.class);
                 }
             }
             @Override
@@ -94,81 +84,54 @@ public class FirebaseDAO {
         });
     }
 
-    public ArrayList<Friend> getFriends(){
-        return friendList.getFriends();
+    public void updateUser(User user){
+        String id = user.getID();
+        Map<String,Object> taskMap = new HashMap<>();
+        taskMap.put(id,user);
+        mUserDB.updateChildren(taskMap);
     }
 
-    public User getUser(){
-        return  getUser(this.id);
+    public void setUser(User user){
+        String id = user.getID();
+        mUserDB.child(id).setValue(user);
     }
+    public void setFriend(String userID, Friend friend){
+        mFriendDB.child(userID).child(friend.getfriendID()).setValue(friend.getFriendStatus());}
 
-    public User getUser(String id){
-        mUserDB.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+    //update the relation of a friend
+    public void updateFriend(String userID, Friend friend){
+        this.stringCursor = userID;
+        this.friendCursor = friend;
+        mFriendDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                UserCursor = dataSnapshot.getValue(User.class);
+                if(dataSnapshot.child(stringCursor).exists()){
+                    Map<String,Object> taskMap = new HashMap<>();
+                    taskMap.put(friendCursor.getfriendID(),friendCursor.getFriendStatus());
+                    mFriendDB.child(stringCursor).updateChildren(taskMap);
+                }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
         });
-        return UserCursor;
+
     }
 
-    public void updateFriend(String userID, Friend friend){
-        String friendName = friend.getmID().toString();
-        ArrayList<Friend> tempFriends = friendList.getFriends();
-        for (int i = 0; i < tempFriends.size(); i++) {
-            Friend f = tempFriends.get(i);
-            if(f.getmID().toString().equals(friendName)){
-                tempFriends.set(i,friend);
-                break;
-            }
-        }
-        friendList.setFriends(tempFriends);
-        mFriendDB.child(this.id).setValue(friendList);
+    public void deleteFriend(String userID, String friendId){
+        this.stringCursor = userID;
+        this.friendCursor = new Friend();
+        friendCursor.setfriendID(friendId);
+        mFriendDB.child(userID).child(friendId).removeValue();
     }
 
-    public void deleteFriend(String friendId){
-        String friendName = friendId;
-        ArrayList<Friend> tempFriends = friendList.getFriends();
-        for (int i = 0; i < tempFriends.size(); i++) {
-            Friend f = tempFriends.get(i);
-            if(f.getmID().toString().equals(friendName)){
-                tempFriends.remove(i);
-                break;
-            }
-        }
-        friendList.setFriends(tempFriends);
-        mFriendDB.child(this.id).setValue(friendList);
+    //this method is useful for making queries
+    public DatabaseReference getFriendsDatabase(){
+        return  mFriendDB;
     }
 
-    public void addFriend(String id){
-        //todo create mapping for friends DB
-        ArrayList<Friend> tempList = friendList.getFriends();
-        tempList.add(getFriend(id));
-        friendList.setFriends(tempList);
-        mFriendDB.child(this.id).push().setValue(id);
-    }
-    
-    public static void updateUser(User user){
-        DatabaseReference mUserDB = FirebaseDatabase.getInstance().getReference().child("users");
-        User u = new User();
-        u.setID("hBFH9BTDd5cuo0YRGLau26KuJBv2");
-        u.setPhoneNumber("2333333");
-        mUserDB.child("hBFH9BTDd5cuo0YRGLau26KuJBv2").setValue(u);
-    }
-
-    public Friend getFriend(String id){
-//        ArrayList<Friend> tempList = friendList.getFriends();
-        for(Friend friend : friendList.getFriends()){
-            if (friend.getmID().toString().equals(id)){
-                return friend;
-            }
-        }
-        return null;
+    public DatabaseReference getUserDatabase(){
+        return mUserDB;
     }
 
 }

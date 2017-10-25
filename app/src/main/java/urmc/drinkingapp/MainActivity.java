@@ -34,7 +34,6 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
-import urmc.drinkingapp.control.DataAccess;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
 import urmc.drinkingapp.pages.Profile.ProfileActivity;
@@ -176,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        DataAccess dataAccess = new DataAccess();
         Log.d("MainActivity","data access created");
 
 
@@ -258,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
         HashMap<Date,Integer> drunkDays = new HashMap<Date,Integer>();
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
-                String msgData = "";
                 Date messageDate = millisToDate(Long.parseLong(cursor.getString(4)));
                 Log.e("DATE-TO-STRING", getSimpleDate(messageDate));
                 Log.e("STRING-TO-DATE", stringToDate(getSimpleDate(messageDate)).toString());

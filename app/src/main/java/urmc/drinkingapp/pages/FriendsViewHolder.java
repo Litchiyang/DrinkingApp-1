@@ -70,7 +70,7 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
         }*/
 
         //set all the other attributes
-        mUserName.setText(user.getFullname());
+        mUserName.setText(user.getFirstname()+" "+user.getLastname());
 
     }
 }

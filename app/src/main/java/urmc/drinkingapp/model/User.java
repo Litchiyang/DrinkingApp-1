@@ -36,13 +36,6 @@ public class User {
         mID = id;
     }
 
-    public String getFullname() {
-        return mFirstname;
-    }
-    public void setFullname(String mFullname) {
-        this.mFirstname = mFullname;
-    }
-
     public String getEmail() {
         return mEmail;
     }
@@ -71,13 +64,6 @@ public class User {
         this.mFirstname = mFirstname;
     }
 
-    public String getLastname() {
-        return mLastname;
-    }
-    public void setLastname(String mLastname) {
-        this.mLastname= mLastname;
-    }
-
     public String getPhoneNumber() {
         return mPhoneNumber;
     }
@@ -99,6 +85,16 @@ public class User {
         Lon = lon;
     }
 
+    public String getLastname(){
+        return mFirstname + " " + mLastname;
+    }
+    public void setLastname(String mLastname) {
+        //compromise to the old version where only full name is stored
+        String[] name = mLastname.split(" ");
+        if(name.length>1)
+            this.mLastname = name[1];
+        this.mFirstname= name[0];
+    }
 
 
 }

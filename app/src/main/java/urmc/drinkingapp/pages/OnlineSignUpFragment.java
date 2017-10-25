@@ -25,7 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.control.DataAccess;
+import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
@@ -48,7 +48,7 @@ public class OnlineSignUpFragment extends Fragment {
 
     private String mLoginEmail;
     private String mLoginPassword;
-    private String mLoginName;
+    private String mLoginFirstName;
     private String mLoginLastName;
     private User mLoginUser;
 
@@ -164,7 +164,7 @@ public class OnlineSignUpFragment extends Fragment {
                 else{
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
-                    mLoginName = mNameEditText.getText().toString();
+                    mLoginFirstName = mNameEditText.getText().toString();
                     mLoginLastName = mLastNameEditText.getText().toString();
                     
                     showProgressDialog();
@@ -178,15 +178,13 @@ public class OnlineSignUpFragment extends Fragment {
                                     // If sign in fails, display a message to the user. If sign in succeeds
                                     // the auth state listener will be notified and logic to handle the
                                     // signed in user can be handled in the listener.
-
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(getActivity().getApplicationContext(), "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
                                     } else {
 
-                                        onAuthSuccess(task.getResult().getUser(),mLoginName+" "+mLoginLastName);
+                                        onAuthSuccess(task.getResult().getUser(),mLoginFirstName, mLoginLastName);
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
-
                                         //DrinkingAppCollection.mMainUser = signUpUser;
                                         //intent.putExtra("EMAIL", mLoginEmail);
                                         //intent.putExtra("PASSWORD", mLoginPassword);
@@ -200,33 +198,26 @@ public class OnlineSignUpFragment extends Fragment {
             }
         });
 
-        DataAccess.updateUser(null);
 
         return view;
     }
 
-    private void onAuthSuccess(FirebaseUser user, String name) {
+    private void onAuthSuccess(FirebaseUser user,String firstname, String lastname) {
         // Write new user
-        writeNewUser(user.getUid(), name, user.getEmail());
+        User u = new User();
+        u.setLastname(lastname);
+        u.setFirstname(firstname);
+        u.setEmail(user.getEmail());
+        u.setID(user.getUid());
+        //creates a new user in database
+        FirebaseDAO dao = new FirebaseDAO();
+        dao.setUser(u);
     }
-
-    // [START basic_write]
-    private void writeNewUser(String userId, String name, String email) {
-        User newUser = new User();
-        newUser.setID(userId);
-        newUser.setFirstname(mLoginName);
-        newUser.setLastname(mLoginLastName);
-        newUser.setEmail(mLoginEmail);
-        newUser.setPhoneNumber("2333333");
-        DataAccess.updateUser(newUser);
-    }
-    // [END basic_write]
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mListener = (OnlineSignUpFragment.SignUpProcessCancel)context;
-
     }
 
 }

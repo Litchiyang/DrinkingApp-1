@@ -78,8 +78,21 @@
             android:textSize="25sp"
             android:padding="5dp"
             android:textStyle="bold"
-            android:id="@+id/edit_text_fullname_profile"
-            android:hint="@string/fullname_hint_string"
+            android:id="@+id/edit_text_firstname_profile"
+            android:hint="@string/firstname_hint_string"
+            android:textAlignment="center"
+            android:layout_gravity="center_horizontal"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/name_string"
+            android:textSize="25sp"
+            android:padding="5dp"
+            android:textStyle="bold"
+            android:id="@+id/edit_text_lastname_profile"
+            android:hint="@string/lastname_hint_string"
             android:textAlignment="center"
             android:layout_gravity="center_horizontal"/>
 
@@ -96,17 +109,6 @@
             android:hint="@string/email_hint_string"
             android:layout_gravity="center_horizontal"/>
 
-        <!--
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/ok_string"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/button_ok_edit_profile"/>
-
-            -->
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/button_ok_edit_profile"
