@@ -88,6 +88,8 @@ public class User {
     public String getLastname(){
         return mFirstname + " " + mLastname;
     }
+
+    //god save us
     public void setLastname(String mLastname) {
         //compromise to the old version where only full name is stored
         String[] name = mLastname.split(" ");
