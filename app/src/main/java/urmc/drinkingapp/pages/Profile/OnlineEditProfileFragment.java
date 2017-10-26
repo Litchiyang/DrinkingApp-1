@@ -39,6 +39,7 @@ import java.io.InputStream;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.PhotoActivity;
 
@@ -80,7 +81,7 @@ public class OnlineEditProfileFragment extends Fragment {
     }
 
     //get current user
-    public String getUid() {return FirebaseAuth.getInstance().getCurrentUser().getUid();}
+
 
 
     @Override
@@ -94,7 +95,7 @@ public class OnlineEditProfileFragment extends Fragment {
         // [END initialize_database_ref]
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        mUserStorageRef = mStorageRef.child(getUid());
+        mUserStorageRef = mStorageRef.child(Utils.getUid());
 
 
 
@@ -102,24 +103,24 @@ public class OnlineEditProfileFragment extends Fragment {
         mProfilePicImageView = (ImageView)view.findViewById(R.id.image_view_profile_pic_edit_profile);
         mFullnameEditText = (EditText)view.findViewById(R.id.edit_text_firstname_profile);
         mEmailTextView = (TextView) view.findViewById(R.id.edit_text_email_profile);
-
+        FirebaseDAO dao = new FirebaseDAO();
 
         // [START single_value_read]
-        final String userId = getUid();
-        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+        final String userId = Utils.getUid();
+        dao.getUserDatabase().addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         mUser = dataSnapshot.getValue(User.class);
 
-                        // [START_EXCLUDE]
                         if (mUser == null) {
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
                             Toast.makeText(getActivity(),
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
+                            mUser = new User(Utils.getUid());
                         } else {
                             //setting appropriate information in the widgets according to the user's attributes
                             mFullnameEditText.setText(mUser.getFirstname()+" "+mUser.getLastname());
@@ -248,6 +249,7 @@ public class OnlineEditProfileFragment extends Fragment {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    @SuppressWarnings("VisibleForTests")
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 }
             });

@@ -26,6 +26,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
@@ -41,7 +42,7 @@ public class OnlineSignUpFragment extends Fragment {
     //private Button mCancelButton;
     private FancyButton mSignUpButton;
     private FancyButton mCancelButton;
-    private EditText mNameEditText;
+    private EditText mFirstNameEditText;
     private EditText mLastNameEditText;
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
@@ -54,7 +55,7 @@ public class OnlineSignUpFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    String TAG = "SIGN UP PROCEDURE";
+    String TAG = "OnlineSignUpFragment";
 
     private DatabaseReference mDatabase;
 
@@ -129,7 +130,7 @@ public class OnlineSignUpFragment extends Fragment {
         };
 
         mCancelButton = (FancyButton) view.findViewById(R.id.button_cancel_sign_up);
-        mNameEditText = (EditText)view.findViewById(R.id.edit_text_name_sign_up);
+        mFirstNameEditText = (EditText)view.findViewById(R.id.edit_text_first_name_sign_up);
         mLastNameEditText = (EditText)view.findViewById(R.id.edit_text_last_name_sign_up);
         mEmailEditText = (EditText)view.findViewById(R.id.edit_text_enter_email_sign_up);
         mPasswordEditText = (EditText)view.findViewById(R.id.edit_text_enter_password_sign_up);
@@ -146,25 +147,26 @@ public class OnlineSignUpFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!isValidEmail(mEmailEditText.getText())){
-                    Toast.makeText(getActivity(), "Enter a valid email", Toast.LENGTH_SHORT).show();
-                }
-                else if(!isValidPassword(mPasswordEditText.getText())){
-                    Toast.makeText(getActivity(), "Enter a valid password",
+                    Toast.makeText(getActivity(), getString(R.string.email_hint_string),
                             Toast.LENGTH_SHORT).show();
                 }
-                else if(mNameEditText.getText().length()<1){
-                    Toast.makeText(getActivity(), "Enter a valid name",
+                else if(!isValidPassword(mPasswordEditText.getText())){
+                    Toast.makeText(getActivity(), getString(R.string.enter_password_string),
+                            Toast.LENGTH_SHORT).show();
+                }
+                else if(mFirstNameEditText.getText().length()<1){
+                    Toast.makeText(getActivity(), getString(R.string.firstname_hint_string),
                             Toast.LENGTH_SHORT).show();
                 }
                 else if(mLastNameEditText.getText().length()<1){
-                    Toast.makeText(getActivity(), "Enter a valid last name",
+                    Toast.makeText(getActivity(), getString(R.string.lastname_hint_string),
                             Toast.LENGTH_SHORT).show();
                 }
 
                 else{
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
-                    mLoginFirstName = mNameEditText.getText().toString();
+                    mLoginFirstName = mFirstNameEditText.getText().toString();
                     mLoginLastName = mLastNameEditText.getText().toString();
                     
                     showProgressDialog();
@@ -181,13 +183,11 @@ public class OnlineSignUpFragment extends Fragment {
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(getActivity().getApplicationContext(), "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
+                                        Log.e(TAG,task.getException().getMessage());
                                     } else {
-
                                         onAuthSuccess(task.getResult().getUser(),mLoginFirstName, mLoginLastName);
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
-                                        //DrinkingAppCollection.mMainUser = signUpUser;
-                                        //intent.putExtra("EMAIL", mLoginEmail);
-                                        //intent.putExtra("PASSWORD", mLoginPassword);
+                                        intent.putExtra(IntentParam.ANALYZE,1);
                                         getActivity().startActivity(intent);
                                         getActivity().finish();
                                     }
@@ -197,8 +197,6 @@ public class OnlineSignUpFragment extends Fragment {
                 }
             }
         });
-
-
         return view;
     }
 
@@ -209,6 +207,8 @@ public class OnlineSignUpFragment extends Fragment {
         u.setFirstname(firstname);
         u.setEmail(user.getEmail());
         u.setID(user.getUid());
+        u.setLat(Math.random()*180-90);
+        u.setLon(Math.random()*360-180);
         //creates a new user in database
         FirebaseDAO dao = new FirebaseDAO();
         dao.setUser(u);

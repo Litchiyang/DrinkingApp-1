@@ -22,12 +22,14 @@
         android:supportsRtl="true"
         android:theme="@style/DrinkingTheme">
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:theme="@style/DrinkingTheme.NoActionBar"/>
 
         <activity
             android:name=".DrunkModeDefaultActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/DrinkingTheme.NoActionBar"/>
 
         <activity
             android:name=".pages.EditProfileActivity"
@@ -57,7 +59,8 @@
 
 
         <!--The app should start here-->
-        <activity android:name=".pages.OnlineInitialActitivity">
+        <activity android:name=".pages.OnlineInitialActitivity"
+            android:theme="@style/DrinkingTheme.NoActionBar">
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

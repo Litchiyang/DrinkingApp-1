@@ -3,6 +3,8 @@ package urmc.drinkingapp.control;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * Created by Shengqi Suizhu on 2017/8/2.
  * Class for methods that might be used any where in the project
@@ -29,4 +31,6 @@ public class Utils {
         BitmapFactory.Options scaledOptions = new BitmapFactory.Options(); scaledOptions.inSampleSize = sampleSize;
         return BitmapFactory.decodeFile(path, scaledOptions);
     }
+
+    public static String getUid() {return FirebaseAuth.getInstance().getCurrentUser().getUid();}
 }

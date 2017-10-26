@@ -27,7 +27,6 @@ public class GoingOutSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_going_out_settings);
-        Toast.makeText(this,"WTF",Toast.LENGTH_SHORT).show();
         //initlize recyclerview
         mRecyclerView = (RecyclerView) findViewById(R.id.going_out_recycler_view);
 

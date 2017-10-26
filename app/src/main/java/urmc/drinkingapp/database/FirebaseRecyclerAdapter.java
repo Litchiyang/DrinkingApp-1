@@ -2,6 +2,9 @@ package urmc.drinkingapp.database;
 
 /**
  * Created by Alessandro on 3/15/17.
+ *
+ * Taken from mmazzarolo/firebase-recyclerview
+ *
  */
 
 import android.support.annotation.LayoutRes;

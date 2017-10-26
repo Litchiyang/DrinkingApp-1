@@ -35,6 +35,7 @@ import urmc.drinkingapp.model.User;
  * A simple {@link Fragment} subclass.
  */
 public class BuddyFragment extends Fragment {
+    private static final String TAG = "BuddyFragment";
     //instance of the recylcer view
     private RecyclerView mRecyclerView;
 
@@ -93,7 +94,7 @@ public class BuddyFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null){
-                    Log.d("FRIENDS",dataSnapshot.toString());
+                    Log.d(TAG,dataSnapshot.toString());
                 }else{
                     OnlineUpdateUI();
                 }
@@ -116,7 +117,7 @@ public class BuddyFragment extends Fragment {
     public Query getQuery(DatabaseReference databaseReference) {
         // All my friends
         Query q = databaseReference.child("users").child(getUid()).child("friends");
-        Log.d("QUERY",q.toString());
+        Log.d(TAG,"getQuery"+q.toString());
         return q;
     }
 

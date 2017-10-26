@@ -13,6 +13,7 @@
     <string name="profile_title">My Profile</string>
     <string name="name_string">Ruby Reynoso</string>
     <string name="email_string">rreynoso@u.rochester.edu</string>
+    
     <string name="edit_profile_string">Edit Profile</string>
 
     <string name="email_hint_string">Enter your email</string>

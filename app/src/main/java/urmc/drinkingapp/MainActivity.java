@@ -34,6 +34,7 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
 import urmc.drinkingapp.pages.Profile.ProfileActivity;
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         mGraph.getLegendRenderer().setTextColor(Color.WHITE);
         */
 
-        analyzeText = getIntent().getIntExtra("ANALYZETEXT", 0);
+        analyzeText = getIntent().getIntExtra(IntentParam.ANALYZE, 0);
 
         //Start analyzing texts
         mText = (FancyButton) findViewById(R.id.button_analyzing_text_main_activity);

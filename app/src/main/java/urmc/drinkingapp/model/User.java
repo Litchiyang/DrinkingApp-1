@@ -89,13 +89,8 @@ public class User {
         return mFirstname + " " + mLastname;
     }
 
-    //god save us
     public void setLastname(String mLastname) {
-        //compromise to the old version where only full name is stored
-        String[] name = mLastname.split(" ");
-        if(name.length>1)
-            this.mLastname = name[1];
-        this.mFirstname= name[0];
+        this.mLastname = mLastname;
     }
 
 

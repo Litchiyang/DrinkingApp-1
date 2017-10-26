@@ -5,20 +5,14 @@
     android:layout_height="match_parent"
     tools:context="urmc.drinkingapp.EditProfileFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="10dp"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:text="@string/edit_profile_string"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <!--
 
@@ -36,13 +30,13 @@
             android:id="@+id/button_change_profile_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:paddingBottom="10dp"
             android:paddingLeft="30dp"
             android:paddingRight="30dp"
             android:paddingTop="10dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             fancy:fb_borderColor="#FFFFFF"
             fancy:fb_borderWidth="1dp"
             fancy:fb_defaultColor="@color/colorPinkOrange"
@@ -52,13 +46,12 @@
             fancy:fb_textColor="#FFFFFF" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/image_view_profile_pic_edit_profile"
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:src="@drawable/noprofilephoto"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+            fancy:civ_border_color="#FF000000"
+            fancy:civ_border_width="2dp" />
 
         <!--
         <ImageView
@@ -74,7 +67,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/name_string"
             android:textSize="25sp"
             android:padding="5dp"
             android:textStyle="bold"
@@ -87,7 +79,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/name_string"
             android:textSize="25sp"
             android:padding="5dp"
             android:textStyle="bold"

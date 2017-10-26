@@ -22,6 +22,14 @@
         android:textSize="45dp"
         android:textStyle="bold" />
 
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:id="@+id/main_activity_graph"
+        android:layout_below="@id/text_view_app_name"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="5dp"/>
+
 
     <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/button_analyzing_text_main_activity"
@@ -31,15 +39,17 @@
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
         android:paddingTop="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/text_view_app_name"
         fancy:fb_borderColor="#FFFFFF"
         fancy:fb_borderWidth="1dp"
         fancy:fb_defaultColor="@color/colorPinkOrange"
         fancy:fb_focusColor="@color/colorPinkOrangeToggle"
         fancy:fb_radius="30dp"
-        fancy:fb_text="Analyzing text"
-        fancy:fb_textColor="#FFFFFF" />
+        fancy:fb_text="Analyze text"
+        fancy:fb_textColor="#FFFFFF"
+        android:layout_below="@+id/main_activity_graph"
+        android:layout_marginTop="14dp"
+        android:layout_alignStart="@+id/button_profile_main_activity"
+        android:layout_alignEnd="@+id/button_profile_main_activity" />
 
 
     <!--<TextView-->
@@ -59,13 +69,7 @@
 
         -->
 
-    <com.jjoe64.graphview.GraphView
-        android:layout_width="match_parent"
-        android:layout_height="200dip"
-        android:id="@+id/main_activity_graph"
-        android:layout_below="@id/button_analyzing_text_main_activity"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="5dp"/>
+
 
 <!--
     <Button
@@ -88,8 +92,7 @@
         android:paddingRight="30dp"
         android:paddingTop="10dp"
         android:layout_marginBottom="20dp"
-        android:layout_below="@id/main_activity_graph"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@id/button_analyzing_text_main_activity"
         android:layout_marginTop="20dp"
         fancy:fb_borderColor="#FFFFFF"
         fancy:fb_borderWidth="1dp"
@@ -97,7 +100,9 @@
         fancy:fb_focusColor="@color/colorPinkOrangeToggle"
         fancy:fb_radius="100dp"
         fancy:fb_text="@string/profile_title"
-        fancy:fb_textColor="#FFFFFF" />
+        fancy:fb_textColor="#FFFFFF"
+        android:layout_alignEnd="@+id/button_friends_main_activity"
+        android:layout_alignStart="@+id/button_friends_main_activity" />
 
 
 
@@ -134,16 +139,15 @@
         android:layout_marginBottom="20dp"
         android:layout_centerVertical="false"
         android:layout_below="@id/button_profile_main_activity"
-        android:layout_alignStart="@+id/button_profile_main_activity"
-        android:layout_alignEnd="@+id/button_profile_main_activity"
-        android:layout_centerHorizontal="true"
         fancy:fb_borderColor="#FFFFFF"
         fancy:fb_borderWidth="1dp"
         fancy:fb_defaultColor="@color/colorPinkOrange"
         fancy:fb_focusColor="@color/colorPinkOrangeToggle"
         fancy:fb_radius="30dp"
         fancy:fb_text="@string/friends_string"
-        fancy:fb_textColor="#FFFFFF" />
+        fancy:fb_textColor="#FFFFFF"
+        android:layout_alignStart="@+id/button_out_setting_main_activity"
+        android:layout_alignEnd="@+id/button_out_setting_main_activity" />
 
     <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/button_out_setting_main_activity"

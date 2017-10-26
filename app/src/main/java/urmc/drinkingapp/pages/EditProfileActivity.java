@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.pages.Profile.OnlineEditProfileFragment;
 
 /**
@@ -31,7 +32,7 @@ public class EditProfileActivity extends AppCompatActivity {
         //onSavedInstanceState standard procedure
         if (savedInstanceState!=null){
             //mEditProfileFragment = (EditProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"FRAGMENT");
-            mEditProfileFragment = (OnlineEditProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"FRAGMENT");
+            mEditProfileFragment = (OnlineEditProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState, IntentParam.FRAGMENT);
         }
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -43,6 +44,6 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, "FRAGMENT", mEditProfileFragment);
+        getSupportFragmentManager().putFragment(outState, IntentParam.FRAGMENT, mEditProfileFragment);
     }
 }

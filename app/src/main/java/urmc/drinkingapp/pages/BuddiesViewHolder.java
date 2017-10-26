@@ -46,7 +46,6 @@ public class BuddiesViewHolder extends RecyclerView.ViewHolder {
     //bind a user to the viewHolder
     public void bindUser(User user){
         mUser = user;
-
         /*
         //set up the picture
         String mPath = user.getProfilePic();

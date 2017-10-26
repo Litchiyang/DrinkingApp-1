@@ -23,7 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.DrunkTextSettingsActivity;
+import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.model.User;
 
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
@@ -58,7 +60,7 @@ public class OnlineSignInFragment extends Fragment {
     private String mLoginPassword;
     private User mLoginUser;
 
-    String TAG = "LOGIN PROCEDURE";
+    String TAG = "OnlineSignInFragment";
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -177,9 +179,9 @@ public class OnlineSignInFragment extends Fragment {
                                     }
 
                                     else{
-                                        Intent intent = new Intent(getActivity(), DrunkTextSettingsActivity.class);
-                                        //intent.putExtra("EMAIL", mLoginEmail);
-                                        //intent.putExtra("PASSWORD", mLoginPassword);
+                                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                                        //hardcode bs here
+                                        intent.putExtra(IntentParam.ANALYZE,1);
                                         startActivity(intent);
                                     }
                                 }
