@@ -13,8 +13,7 @@ public class ProfileActivity extends AppCompatActivity implements OnlineProfileF
 
     private OnlineProfileFragment mProfileFragment;
     private OnlineEditProfileFragment mEditProfileFragment;
-    int counter = 0;
-
+    int counter = 0; //????? wtf is this for
 
     public void EditProfileStarted(){
         FragmentManager fm = getSupportFragmentManager();
@@ -38,8 +37,6 @@ public class ProfileActivity extends AppCompatActivity implements OnlineProfileF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-
 
 
         FragmentManager fm = getSupportFragmentManager();

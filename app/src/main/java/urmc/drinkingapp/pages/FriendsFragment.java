@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.FirebaseRecyclerAdapter;
 import urmc.drinkingapp.model.User;
+import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
 
 /**
  * Friends fragment displays a list of the user's friends. It is used to display the resulting users when a search is performed.

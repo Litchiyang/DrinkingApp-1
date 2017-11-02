@@ -10,15 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-
+import android.widget.Toast;
 import urmc.drinkingapp.R;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 
 
 /**
  * Fragment displaying a SearchView to search for users on the database
  */
 public class FullScreenSearchTabFragment extends Fragment {
-
+    private static final String TAG = "FullScreenSearchTabFrag";
 
     public FullScreenSearchTabFragment() {
         // Required empty public constructor
@@ -31,7 +33,7 @@ public class FullScreenSearchTabFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_full_screen_search_tab, container, false);
 
-        Log.d("FULLSCREEN SEARCH","ON CREATE");
+        Log.d(TAG,"onCreateView");
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -39,7 +41,18 @@ public class FullScreenSearchTabFragment extends Fragment {
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(getContext(),"TESTING",Toast.LENGTH_SHORT);
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return view;
     }
 

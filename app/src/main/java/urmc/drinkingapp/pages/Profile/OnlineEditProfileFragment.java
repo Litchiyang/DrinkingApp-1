@@ -22,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +51,8 @@ public class OnlineEditProfileFragment extends Fragment {
 
     //widgets
     private ImageView mProfilePicImageView;
-    private EditText mFullnameEditText;
+    private EditText mFirstnameEditText;
+    private EditText mLastnameEditText;
     //private Button mOkButton;
     //private Button mChangePicButton;
     private FancyButton mOkButton;
@@ -67,7 +67,7 @@ public class OnlineEditProfileFragment extends Fragment {
     // [START declare_database_ref]
     private DatabaseReference mDatabase;
     // [END declare_database_ref]
-    final String TAG = "EDIT PROFILE";
+    final String TAG = "OnlineEditProfile";
 
     private EditProfileFinished mListener;
 
@@ -101,13 +101,14 @@ public class OnlineEditProfileFragment extends Fragment {
 
         //wiring up the widgets
         mProfilePicImageView = (ImageView)view.findViewById(R.id.image_view_profile_pic_edit_profile);
-        mFullnameEditText = (EditText)view.findViewById(R.id.edit_text_firstname_profile);
+        mFirstnameEditText = (EditText)view.findViewById(R.id.edit_text_firstname_profile);
+        mLastnameEditText =  (EditText)view.findViewById(R.id.edit_text_lastname_profile);
         mEmailTextView = (TextView) view.findViewById(R.id.edit_text_email_profile);
         FirebaseDAO dao = new FirebaseDAO();
 
         // [START single_value_read]
         final String userId = Utils.getUid();
-        dao.getUserDatabase().addListenerForSingleValueEvent(
+        dao.getUserDatabase().child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -122,8 +123,11 @@ public class OnlineEditProfileFragment extends Fragment {
                                     Toast.LENGTH_SHORT).show();
                             mUser = new User(Utils.getUid());
                         } else {
+                            Log.d(TAG, "Editing User " + userId +":"+dataSnapshot.toString());
+
                             //setting appropriate information in the widgets according to the user's attributes
-                            mFullnameEditText.setText(mUser.getFirstname()+" "+mUser.getLastname());
+                            mFirstnameEditText.setText(mUser.getFirstname());
+                            mLastnameEditText.setText(mUser.getLastname());
                             mEmailTextView.setText(mUser.getEmail());
                             //setting profile picture
                             String mPath = mUser.getProfilePic();
@@ -151,7 +155,7 @@ public class OnlineEditProfileFragment extends Fragment {
 
         //onSavedInstanceState standard procedure to persist the state
         if (savedInstanceState!=null){
-            mFullnameEditText.setText(savedInstanceState.getString("FULLNAME"));
+            mFirstnameEditText.setText(savedInstanceState.getString("FULLNAME"));
         }
 
 
@@ -162,12 +166,13 @@ public class OnlineEditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FirebaseDAO dao = new FirebaseDAO();
-                mUser.setFirstname(mFullnameEditText.getText().toString());
+                mUser.setFirstname(mFirstnameEditText.getText().toString());
+                mUser.setLastname(mLastnameEditText.getText().toString());
+                dao.updateUser(mUser);
                 //mDatabase.child("users").child(userId).setValue(mUser);
-                mDatabase.child("users").child(userId).child("fullname").setValue(mUser.getFirstname());
+
                 mListener.EditProfileOK();
                 if(!mUser.getProfilePic().equals("none")){uploadPic();}
-
                 /*
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();*/
@@ -181,8 +186,7 @@ public class OnlineEditProfileFragment extends Fragment {
         mChangePicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Log.d("EDITPROFILE","Changing Pic");
+                Log.d(TAG,"Changing Pic");
                 Intent intent = new Intent(getActivity(), PhotoActivity.class);
                 startActivityForResult(intent,0);
             }

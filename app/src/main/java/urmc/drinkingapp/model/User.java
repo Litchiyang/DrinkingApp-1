@@ -86,7 +86,7 @@ public class User {
     }
 
     public String getLastname(){
-        return mFirstname + " " + mLastname;
+        return mLastname;
     }
 
     public void setLastname(String mLastname) {

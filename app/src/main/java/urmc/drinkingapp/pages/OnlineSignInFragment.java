@@ -123,12 +123,18 @@ public class OnlineSignInFragment extends Fragment {
             }
         };
 
+
         //wiring up widgets
         mEmailEditText = (EditText)view.findViewById(R.id.edit_text_enter_email);
         mPasswordEditText = (EditText)view.findViewById(R.id.edit_text_enter_password);
         mTwitterSignIn = (FancyButton)view.findViewById(R.id.button_twitter_online_sign_in);
         mFacebookSignIn = (FancyButton)view.findViewById(R.id.button_facebook_online_sign_in);
         mGoogleSignIn = (FancyButton)view.findViewById(R.id.button_gplus_online_sign_in);
+
+        //debug only
+        mEmailEditText.setText("a@a.com");
+        mPasswordEditText.setText("aaaaaa");
+
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -204,20 +210,11 @@ public class OnlineSignInFragment extends Fragment {
         return view;
     }
 
-    
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mListener = (SignUpProcess)context;
     }
 
-    //persisting the state
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("EMAIL",mEmailEditText.getText().toString());
-        outState.putString("PASSWORD",mPasswordEditText.getText().toString());
-    }
 
 }

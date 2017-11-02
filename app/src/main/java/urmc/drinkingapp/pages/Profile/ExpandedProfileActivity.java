@@ -1,10 +1,11 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Profile;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.pages.Profile.ExpandedProfileFragment;
 
 /**
  * Activity hosting the ExpandedProfileFragment

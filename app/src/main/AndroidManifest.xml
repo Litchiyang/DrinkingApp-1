@@ -32,7 +32,7 @@
             android:theme="@style/DrinkingTheme.NoActionBar"/>
 
         <activity
-            android:name=".pages.EditProfileActivity"
+            android:name=".pages.Profile.EditProfileActivity"
             android:parentActivityName=".pages.Profile.ProfileActivity" />
 
         <activity
@@ -43,7 +43,7 @@
      this activity enables the search dialog to initiate searches
      in the SearchableActivity
         -->
-        <activity android:name=".pages.ExpandedProfileActivity" />
+        <activity android:name=".pages.Profile.ExpandedProfileActivity" />
 
         <activity
             android:name=".pages.FriendsSearchableActivity"

@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Profile;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;

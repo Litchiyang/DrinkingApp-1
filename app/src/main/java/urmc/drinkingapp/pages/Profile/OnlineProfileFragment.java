@@ -26,6 +26,8 @@ import com.google.firebase.storage.StorageReference;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.model.User;
 
 
@@ -49,7 +51,7 @@ public class OnlineProfileFragment extends Fragment {
     private TextView mEmailTextView;
     //private Button mEditProfileButton;
     private FancyButton mEditProfileButton;
-    final String TAG = "PROFILE FRAGMENT";
+    private static final String TAG = "OnlineProfileFragment";
 
     private User mUser;
     // [START declare_database_ref]
@@ -91,7 +93,6 @@ public class OnlineProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_online_profile, container, false);
 
-
         // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
@@ -105,12 +106,13 @@ public class OnlineProfileFragment extends Fragment {
         showProgressDialog();
         // [START single_value_read]
         final String userId = getUid();
-        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+        FirebaseDAO dao = new FirebaseDAO();
+        dao.getUserDatabase().child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
-                        Log.d("PROFILE",dataSnapshot.toString());
+                        Log.d(TAG,dataSnapshot.toString());
                         mUser = dataSnapshot.getValue(User.class);
                         hideProgressDialog();
                         // [START_EXCLUDE]
@@ -121,6 +123,7 @@ public class OnlineProfileFragment extends Fragment {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            Log.d(TAG,"Viewing User"+mUser.getID());
                             //setting appropriate information in the widgets according to the user's attributes
                             mFullnameTextView.setText(mUser.getFirstname()+" "+mUser.getLastname());
                             mEmailTextView.setText(mUser.getEmail());
@@ -150,17 +153,11 @@ public class OnlineProfileFragment extends Fragment {
         //starting the EditProfileActivity when EditProfile Button is pressed
         //mEditProfileButton = (Button)view.findViewById(R.id.button_edit_profile);
         mEditProfileButton = (FancyButton) view.findViewById(R.id.button_edit_profile);
+//        if(savedInstanceState.getString())
         mEditProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mListener.EditProfileStarted();
-
-                /*
-                Intent intent = new Intent(getActivity(), EditProfileActivity.class);
-                intent.putExtra("EMAIL", mEmail);
-                getActivity().startActivityForResult(intent, 0);
-                updateUI();*/
             }
         });
 

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private FancyButton mText;
     private SlideView mDrunkMode;
     int READ_SMS_REQUEST_CODE = 77;
+    private static final String TAG = "MainActivity";
 
     private int analyzeText;
 
@@ -72,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
         //More useful information can be placed here to analyze how the user is using the app
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "test");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Alessandro Incerto");
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+//        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "test");
+//        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Alessandro Incerto");
+//        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
 
@@ -100,12 +101,6 @@ public class MainActivity extends AppCompatActivity {
         //Start analyzing texts
         mText = (FancyButton) findViewById(R.id.button_analyzing_text_main_activity);
         mGraph = (GraphView) findViewById(R.id.main_activity_graph);
-        if(analyzeText == 0) {
-
-            mText.setVisibility(View.GONE);
-            mGraph.setVisibility(View.GONE);
-
-        } else {
             mText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     mGraph.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
                     mGraph.setTitleColor(Color.WHITE);
                     mGraph.setTitle("Drunk Texting Behavior");
-
 
                     //If permission to read text messages has been granted then proceed to do so and analyze the drunk texting behavior
                     //otherwise show rationale and request permission
@@ -129,19 +123,13 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this,
                                 "This App requires your permission to access your texts and evaluate your drunk texting behavior",
                                 Toast.LENGTH_LONG).show();
-                        Toast.makeText(MainActivity.this,
-                                "This App requires your permission to access your texts and evaluate your drunk texting behavior",
-                                Toast.LENGTH_LONG).show();
-                        Toast.makeText(MainActivity.this,
-                                "This App requires your permission to access your texts and evaluate your drunk texting behavior",
-                                Toast.LENGTH_LONG).show();
                         ActivityCompat.requestPermissions(MainActivity.this,
                                 new String[]{android.Manifest.permission.READ_SMS},
                                 READ_SMS_REQUEST_CODE);
                     }
                 }
             });
-        }
+
 
         //start profile activity
         mProfile = (FancyButton) findViewById(R.id.button_profile_main_activity);
@@ -176,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d("MainActivity","data access created");
+        Log.d(TAG,"data access created");
 
 
 
@@ -235,15 +223,16 @@ public class MainActivity extends AppCompatActivity {
     // public static final String SENT = "content://sms/sent";
     // public static final String DRAFT = "content://sms/draft";
 
+    //disable back button
+    @Override
+    public void onBackPressed() {
+    }
+
     /**
      * This method is capable of reading the SMS that the user has sent and perform the drunk texting analysis using Nabil's algorithm
      * The function stores the number of drunk texts that were sent on a given day and stores this information in a hashMap that is passed
      * displayGraph() function to show this information in a nice graph.
      */
-    @Override
-    public void onBackPressed() {
-    }
-
     public void readTexts() {
         //get parameters from .txt file stored in assets folder
         HashMap<String, Float> params = readParameters();
@@ -482,12 +471,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 // Permission was denied. Display an error message.
-                Toast.makeText(MainActivity.this,
-                        "Can't Analyze your drunk texting behavior without your permission. Go to phone settings to update your permissions",
-                        Toast.LENGTH_SHORT).show();
-                Toast.makeText(MainActivity.this,
-                        "Can't Analyze your drunk texting behavior without your permission. Go to phone settings to update your permissions",
-                        Toast.LENGTH_SHORT).show();
                 Toast.makeText(MainActivity.this,
                         "Can't Analyze your drunk texting behavior without your permission. Go to phone settings to update your permissions",
                         Toast.LENGTH_SHORT).show();

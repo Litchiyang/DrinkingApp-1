@@ -1,5 +1,6 @@
 package urmc.drinkingapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -42,6 +43,12 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
     boolean useText;
     boolean useCall;
 
+
+    //disable back button
+    @Override
+    public void onBackPressed() {
+    }
+
     //Wires up buttons and sets event listeners
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +73,6 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
 
 
         textButton = (FancyButton) findViewById(R.id.button_text_default_drunk_mode);

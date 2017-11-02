@@ -38,7 +38,6 @@ public class FriendsViewPagerActivity extends AppCompatActivity {
             private final String[] mFragmentNames = new String[] {
                     getString(R.string.heading_search_friends),
                     getString(R.string.heading_friends),
-                    //getString(R.string.heading_buddies)
             };
             @Override
             public Fragment getItem(int position) {

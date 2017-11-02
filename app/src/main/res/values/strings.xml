@@ -11,8 +11,8 @@
 
     <string name="cancel_string">Cancel</string>
     <string name="profile_title">My Profile</string>
-    <string name="name_string">Ruby Reynoso</string>
-    <string name="email_string">rreynoso@u.rochester.edu</string>
+    <string name="name_string">Your name</string>
+    <string name="email_string">Your email address</string>
     
     <string name="edit_profile_string">Edit Profile</string>
 

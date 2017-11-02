@@ -29,7 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.database.FirebaseRecyclerAdapter;
 import urmc.drinkingapp.model.User;
-import urmc.drinkingapp.pages.ExpandedProfileActivity;
+import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
 import urmc.drinkingapp.pages.FriendsViewHolder;
 
 
