@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,8 +55,6 @@ public class OnlineEditProfileFragment extends Fragment {
     private ImageView mProfilePicImageView;
     private EditText mFirstnameEditText;
     private EditText mLastnameEditText;
-    //private Button mOkButton;
-    //private Button mChangePicButton;
     private FancyButton mOkButton;
     private FancyButton mChangePicButton;
     private TextView mEmailTextView;
@@ -62,11 +62,7 @@ public class OnlineEditProfileFragment extends Fragment {
     private String mPath;
     private StorageReference mUserStorageRef;
 
-
     private User mUser;
-    // [START declare_database_ref]
-    private DatabaseReference mDatabase;
-    // [END declare_database_ref]
     final String TAG = "OnlineEditProfile";
 
     private EditProfileFinished mListener;
@@ -75,14 +71,9 @@ public class OnlineEditProfileFragment extends Fragment {
         void EditProfileOK();
     }
 
-
     public OnlineEditProfileFragment() {
         // Required empty public constructor
     }
-
-    //get current user
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,14 +81,8 @@ public class OnlineEditProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_online_edit_profile, container, false);
 
-        // [START initialize_database_ref]
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
-
         mStorageRef = FirebaseStorage.getInstance().getReference();
         mUserStorageRef = mStorageRef.child(Utils.getUid());
-
-
 
         //wiring up the widgets
         mProfilePicImageView = (ImageView)view.findViewById(R.id.image_view_profile_pic_edit_profile);
@@ -140,11 +125,8 @@ public class OnlineEditProfileFragment extends Fragment {
                                 mProfilePicImageView.setImageBitmap(photo);
                                 */
                                 mProfilePicImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
                             }
                         }
-
-                        // [END_EXCLUDE]
                     }
 
                     @Override
@@ -158,7 +140,6 @@ public class OnlineEditProfileFragment extends Fragment {
             mFirstnameEditText.setText(savedInstanceState.getString("FULLNAME"));
         }
 
-
         //ok button to save changes
         //mOkButton = (Button)view.findViewById(R.id.button_ok_edit_profile);
         mOkButton = (FancyButton) view.findViewById(R.id.button_ok_edit_profile);
@@ -169,7 +150,6 @@ public class OnlineEditProfileFragment extends Fragment {
                 mUser.setFirstname(mFirstnameEditText.getText().toString());
                 mUser.setLastname(mLastnameEditText.getText().toString());
                 dao.updateUser(mUser);
-                //mDatabase.child("users").child(userId).setValue(mUser);
 
                 mListener.EditProfileOK();
                 if(!mUser.getProfilePic().equals("none")){uploadPic();}
@@ -179,7 +159,6 @@ public class OnlineEditProfileFragment extends Fragment {
 
             }
         });
-
 
         //onClickListener to change picture - triggers the photoActivity capable of taking pictures
         mChangePicButton = (FancyButton) view.findViewById(R.id.button_change_profile_pic);
@@ -243,10 +222,11 @@ public class OnlineEditProfileFragment extends Fragment {
         try {
             InputStream stream = new FileInputStream(new File(mPath));
             UploadTask uploadTask = mUserStorageRef.putStream(stream);
-            //uploadTask = mUserStorageRef.putStream(stream);
+
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+                    Log.d(TAG,"uploadPic failed with storagereference:"+mUserStorageRef);
                     // Handle unsuccessful uploads
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -259,7 +239,7 @@ public class OnlineEditProfileFragment extends Fragment {
             });
         }
         catch (Exception e){
-            Log.d("ONLINEEDIT","File not found");
+            Log.d(TAG,"File not found");
         }
     }
 
@@ -267,6 +247,7 @@ public class OnlineEditProfileFragment extends Fragment {
         Glide.with(getActivity() /* context */)
                 .using(new FirebaseImageLoader())
                 .load(mUserStorageRef)
+                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
                 .into(mProfilePicImageView);
     }
 

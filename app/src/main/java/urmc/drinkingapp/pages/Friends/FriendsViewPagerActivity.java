@@ -15,7 +15,7 @@ import urmc.drinkingapp.R;
  */
 public class FriendsViewPagerActivity extends AppCompatActivity {
 
-    private static final String TAG = "ViewPagerActivity";
+    private static final String TAG = "FriendViewPagerActivity";
 
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
@@ -31,7 +31,7 @@ public class FriendsViewPagerActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new FullScreenSearchTabFragment(),
+                    new SearchTabFragment(),
                     new MyFriendsTabFragment(),
                     //new FriendsBuddyTabFragment(),
             };

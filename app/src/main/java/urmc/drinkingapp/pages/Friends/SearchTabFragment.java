@@ -1,6 +1,5 @@
 package urmc.drinkingapp.pages.Friends;
 
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,25 +13,22 @@ import android.widget.Toast;
 import urmc.drinkingapp.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
-
-
 /**
  * Fragment displaying a SearchView to search for users on the database
  */
-public class FullScreenSearchTabFragment extends Fragment {
-    private static final String TAG = "FullScreenSearchTabFrag";
+public class SearchTabFragment extends Fragment {
+    private static final String TAG = "SearchTabFragment";
 
-    public FullScreenSearchTabFragment() {
+    public SearchTabFragment() {
         // Required empty public constructor
-    }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_full_screen_search_tab, container, false);
-
         Log.d(TAG,"onCreateView");
 
         // Get the SearchView and set the searchable configuration
@@ -55,5 +51,6 @@ public class FullScreenSearchTabFragment extends Fragment {
         });
         return view;
     }
+
 
 }

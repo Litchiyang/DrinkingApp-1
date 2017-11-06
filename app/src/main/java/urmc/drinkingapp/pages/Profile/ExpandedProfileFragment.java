@@ -42,8 +42,6 @@ public class ExpandedProfileFragment extends Fragment {
     //private DrinkingAppCollection mCollection;
 
     private Context mContext;
-    private String mEmail;
-    private String mPassword;
 
     //widgets
     private ImageView mProfilePicture;
@@ -65,7 +63,6 @@ public class ExpandedProfileFragment extends Fragment {
     private DatabaseReference mFriendReference;
     //Reference to Firebase storage to obtain profile picture of user
     private StorageReference mUserStorageRef;
-
 
     public ExpandedProfileFragment() {
         // Required empty public constructor
@@ -93,8 +90,6 @@ public class ExpandedProfileFragment extends Fragment {
             mProgressDialog.dismiss();
         }
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
