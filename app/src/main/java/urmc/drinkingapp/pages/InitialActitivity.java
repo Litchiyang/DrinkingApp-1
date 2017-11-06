@@ -7,20 +7,20 @@ import android.os.Bundle;
 import urmc.drinkingapp.R;
 
 /**
- * Initial activity hosting the OnlineSignInFragment and the OnlineSignUp
+ * Initial activity hosting the SignInFragment and the OnlineSignUp
  * There are two callback interfaces in place to switch between these two fragments
  */
-public class OnlineInitialActitivity extends AppCompatActivity implements OnlineSignInFragment.SignUpProcess, OnlineSignUpFragment.SignUpProcessCancel {
+public class InitialActitivity extends AppCompatActivity implements SignInFragment.SignUpProcess, SignUpFragment.SignUpProcessCancel {
 
-    private OnlineSignInFragment mLoginFragment;
-    private OnlineSignUpFragment mSignUpFragment;
+    private SignInFragment mLoginFragment;
+    private SignUpFragment mSignUpFragment;
     int counter = 0;
 
 
     public void SignUpStarted(){
         FragmentManager fm = getSupportFragmentManager();
         counter = 1;
-        mSignUpFragment = new OnlineSignUpFragment();
+        mSignUpFragment = new SignUpFragment();
         fm.beginTransaction()
                 .replace(R.id.frame_layout_login_activity,mSignUpFragment)
                 .commit();
@@ -29,7 +29,7 @@ public class OnlineInitialActitivity extends AppCompatActivity implements Online
     public void SignUpCancel(){
         FragmentManager fm = getSupportFragmentManager();
         counter = 0;
-        mLoginFragment = new OnlineSignInFragment();
+        mLoginFragment = new SignInFragment();
         fm.beginTransaction()
                 .replace(R.id.frame_layout_login_activity,mLoginFragment)
                 .commit();
@@ -42,10 +42,10 @@ public class OnlineInitialActitivity extends AppCompatActivity implements Online
         setContentView(R.layout.activity_online_initial_actitivity);
 
         FragmentManager fm =  getSupportFragmentManager();
-        mLoginFragment = new OnlineSignInFragment();
+        mLoginFragment = new SignInFragment();
         //get persisted fragment if it exists
         if (savedInstanceState!=null){
-            mLoginFragment = (OnlineSignInFragment) getSupportFragmentManager().getFragment(savedInstanceState,"FRAGMENT");
+            mLoginFragment = (SignInFragment) getSupportFragmentManager().getFragment(savedInstanceState,"FRAGMENT");
         }
         fm.beginTransaction()
                 .replace(R.id.frame_layout_login_activity,mLoginFragment)

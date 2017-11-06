@@ -26,7 +26,7 @@
             android:theme="@style/DrinkingTheme.NoActionBar"/>
 
         <activity
-            android:name=".DrunkModeDefaultActivity"
+            android:name=".pages.DrunkMode.DrunkModeDefaultActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
             android:theme="@style/DrinkingTheme.NoActionBar"/>
@@ -59,7 +59,7 @@
 
 
         <!--The app should start here-->
-        <activity android:name=".pages.OnlineInitialActitivity"
+        <activity android:name=".pages.InitialActitivity"
             android:theme="@style/DrinkingTheme.NoActionBar">
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -88,9 +88,9 @@
             android:name=".pages.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".pages.SettingsActivity" />
-        <activity android:name=".pages.PhotoActivity" />
+        <activity android:name=".pages.Profile.Photo.PhotoActivity" />
         <activity android:name=".pages.GoingOutSettings.GoingOutSettingsActivity" />
-        <activity android:name=".DrunkTextSettingsActivity" />
+        <activity android:name=".pages.DrunkMode.DrunkTextSettingsActivity" />
 
 
         <!--Test Activity exist purely for testing purpose-->

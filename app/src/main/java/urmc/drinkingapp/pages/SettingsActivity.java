@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import mehdi.sakout.fancybuttons.FancyButton;
-import urmc.drinkingapp.DrunkModeDefaultActivity;
+import urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity;
 import urmc.drinkingapp.R;
 
 /**

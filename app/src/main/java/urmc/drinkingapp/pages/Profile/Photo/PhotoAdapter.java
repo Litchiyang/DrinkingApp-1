@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Profile.Photo;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

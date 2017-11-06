@@ -41,7 +41,7 @@ import ng.max.slideview.SlideView;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.control.Utils;
-import urmc.drinkingapp.model.Friend;
+import urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
 import urmc.drinkingapp.pages.Profile.ProfileActivity;

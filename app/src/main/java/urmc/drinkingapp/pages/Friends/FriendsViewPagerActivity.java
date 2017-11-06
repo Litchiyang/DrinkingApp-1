@@ -31,8 +31,9 @@ public class FriendsViewPagerActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new SearchTabFragment(),
                     new MyFriendsTabFragment(),
+                    new SearchTabFragment(),
+
                     //new FriendsBuddyTabFragment(),
             };
             private final String[] mFragmentNames = new String[] {

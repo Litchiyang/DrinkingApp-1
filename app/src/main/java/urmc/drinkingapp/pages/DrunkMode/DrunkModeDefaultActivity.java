@@ -1,6 +1,5 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages.DrunkMode;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -14,6 +13,7 @@ import android.widget.Toast;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import urmc.drinkingapp.R;
 import urmc.drinkingapp.pages.MapsActivity;
 
 import android.Manifest;

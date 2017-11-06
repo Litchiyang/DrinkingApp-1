@@ -36,7 +36,7 @@ import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
 /**
  * Fragment to sign up into the app. Creates a new user for the online database and creates the firebase authentication credentials.
  */
-public class OnlineSignUpFragment extends Fragment {
+public class SignUpFragment extends Fragment {
 
     //private Button mSignUpButton;
     //private Button mCancelButton;
@@ -55,7 +55,7 @@ public class OnlineSignUpFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    String TAG = "OnlineSignUpFragment";
+    String TAG = "SignUpFragment";
 
     private DatabaseReference mDatabase;
 
@@ -67,7 +67,7 @@ public class OnlineSignUpFragment extends Fragment {
     private SignUpProcessCancel mListener;
 
 
-    public OnlineSignUpFragment() {
+    public SignUpFragment() {
         // Required empty public constructor
     }
 
@@ -217,7 +217,7 @@ public class OnlineSignUpFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (OnlineSignUpFragment.SignUpProcessCancel)context;
+        mListener = (SignUpFragment.SignUpProcessCancel)context;
     }
 
 }
