@@ -1,17 +1,26 @@
 package urmc.drinkingapp.pages;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,15 +29,29 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.IntentParam;
+import urmc.drinkingapp.model.Friend;
 import urmc.drinkingapp.model.User;
+
+import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
+import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
 
 /**
  * Maps activity displays the user's location and the buddy's location in real time if available
@@ -37,312 +60,257 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     int MY_LOCATION_REQUEST_CODE = 7;
-    // [START declare_database_ref]
-    private DatabaseReference mDatabase;
-    // [END declare_database_ref]
 
-    // [START declare_database_ref]
-    private DatabaseReference mBuddyReference;
-    // [END declare_database_ref]
-    private User mUser;
-    private User mBuddy;
+
+    // private User mUser;
+    private Friend mBuddy;
     private Marker marker;
     private Double mBuddyLat;
     private Double mBuddyLon;
     private Boolean haveBuddy = false;
     private String mKey;
 
+    private static final String TAG = "MAPS";
+
+    private User mUser;
+    private User mFriend;
+    // [START declare_database_ref]
+    private DatabaseReference mDatabase;
+    // [END declare_database_ref]
+    private StorageReference mUserStorageRef;
+
+
+    public String getUid() {
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(urmc.drinkingapp.R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
         // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
-
-        // [START initialize_database_ref]
-        mBuddyReference = mDatabase.child("users").child(getUid()).child("buddy");
-        // [END initialize_database_ref]
-
-/*
-        mBuddyReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue()==null){
-                    Log.d("MAPS","Null Buddy");
-                    haveBuddy = false;
-                }else {
-                    //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                    if (dataSnapshot.getValue(String.class)!=null) {
-                        mKey = dataSnapshot.getValue(String.class);
-                        Log.e("MAPS",mKey);
-                        haveBuddy = true;
-                        mBuddyReference = mDatabase.child("users").child(mKey);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        */
+        mUserStorageRef = FirebaseStorage.getInstance().getReference().child(getUid());
 
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        createMarker();
+
+    }
+
+    private void createMarker() {
+        final String userId = getUid();
+        final FirebaseDAO dao = new FirebaseDAO();
+        dao.getFriendsDatabase().child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // Get user value
+                        Log.d(TAG, dataSnapshot.toString());
+
+                        mUser = dataSnapshot.getValue(User.class);
+
+                        Iterable<DataSnapshot> mUserChildren = dataSnapshot.getChildren();
+
+                        // [START_EXCLUDE]
+                        if (mUser == null) {
+                            // User is null, error out
+                            Log.e(TAG, "User " + userId + " is unexpectedly null");
+                            Toast.makeText(getApplicationContext(),
+                                    "Error: could not fetch user.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.d(TAG, "UserID is " + userId );
+                            for (DataSnapshot buddy : mUserChildren) {
+
+                                Log.d(TAG, "BUDDY key: " + buddy.getKey() + " value: " + buddy.getValue());
+
+                                if (Integer.valueOf(buddy.getValue().toString()) == 1) {
+
+                                    dao.getUserDatabase().child(buddy.getKey().toString()).addListenerForSingleValueEvent(
+                                            new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot snapshot) {
+                                                    // Get user value
+                                                    Log.d(TAG, snapshot.toString());
+
+                                                    mFriend = snapshot.getValue(User.class);
+
+                                                    // [START_EXCLUDE]
+                                                    if (mFriend == null) {
+                                                        // User is null, error out
+                                                        Log.e(TAG, "User " + mFriend + " is unexpectedly null");
+                                                        Toast.makeText(getApplicationContext(),
+                                                                "Error: could not fetch user.",
+                                                                Toast.LENGTH_SHORT).show();
+
+                                                    } else {
+                                                        Log.d(TAG, "UserID is " + mFriend.getFirstname());
+                                                        Log.d(TAG, "long " + mFriend.getLon() + " " + mFriend.getLat());
+                                                        LatLng friendLocation = new LatLng(mFriend.getLat(), mFriend.getLon());
+                                                        mMap.addMarker(new MarkerOptions().position(friendLocation));
+                                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(friendLocation));
 
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-        } else {
-            // Show rationale and request permission.
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_LOCATION_REQUEST_CODE);
-        }
-        // Acquire a reference to the system Location Manager
-        final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                                                    }
 
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                updateLocation(location);
-                LatLng newloc = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(newloc));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(16.0f));
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
-
-        if (mMap.isMyLocationEnabled()){
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        }
-        // Register the listener with the Location Manager to receive location updates
-        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-        //Get the location of the buddy if available
-        mBuddyReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue()==null){
-                    Log.d("MAPS","Null Buddy");
-                    haveBuddy = false;
-                }else {
-                    //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                    if (dataSnapshot.getValue(String.class)!=null) {
-                        mKey = dataSnapshot.getValue(String.class);
-                        Log.e("MAPS",mKey);
-                        haveBuddy = true;
-                        mBuddyReference = mDatabase.child("users").child(mKey);
-                        Log.e("MAPS",haveBuddy.toString());
-                        if (haveBuddy) {
-                            Log.e("LATREF", mBuddyReference.child("lat").toString());
-                            mBuddyReference.child("lat").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    mBuddyLat = dataSnapshot.getValue(Double.class);
-                                    Log.e("MAPS", "DATA IS CHANGING" + mBuddyLat);
-                                    // [START_EXCLUDE]
-                                    if (mBuddyLat == null) {
-                                        // User is null, error out
-                                        Log.e("MAPS", "Buddy " + " is unexpectedly null");
-                                        Toast.makeText(MapsActivity.this,
-                                                "Friend location not available",
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Log.e("LONREF", mBuddyReference.child("lon").toString());
-                                        mBuddyReference.child("lon").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                mBuddyLon = dataSnapshot.getValue(Double.class);
-                                                Log.e("MAPS", "DATA IS CHANGING" + mBuddyLon);
-                                                // [START_EXCLUDE]
-                                                if (mBuddyLon == null) {
-                                                    // User is null, error out
-                                                    Log.e("MAPS", "Buddy " + " is unexpectedly null");
-                                                    Toast.makeText(MapsActivity.this,
-                                                            "Error: could not fetch user location.",
-                                                            Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    mBuddyReference.addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                                            mBuddy = dataSnapshot.getValue(User.class);
-                                                            Log.e("MAPS", "DATA IS CHANGING");
-                                                            // [START_EXCLUDE]
-                                                            if (mBuddy == null) {
-                                                                // User is null, error out
-                                                                Log.e("MAPS", "Buddy " + " is unexpectedly null");
-                                                                Toast.makeText(MapsActivity.this,
-                                                                        "Error: could not fetch user.",
-                                                                        Toast.LENGTH_SHORT).show();
-                                                            } else {
-                                                                if (mBuddyLat != null && mBuddyLon != null) {
-                                                                    if (marker != null) {
-                                                                        marker.remove();
-                                                                    }
-                                                                    LatLng buddyLocation = new LatLng(mBuddyLat, mBuddyLon);
-                                                                    marker = mMap.addMarker(new MarkerOptions()
-                                                                            .position(buddyLocation)
-                                                                            .title(mBuddy.getFirstname()+" "+mBuddy.getLastname()));
-                                                                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.location_icon));
-                                                                    marker.showInfoWindow();
-                                                                    //mMap.addMarker(new MarkerOptions().position(buddyLocation).title(mBuddy.getFullname())).showInfoWindow();
-                                                                } else {
-                                                                    Log.e("MAPS", "Buddy " + " no Location");
-                                                                    Toast.makeText(MapsActivity.this,
-                                                                            "Buddy location not available",
-                                                                            Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
-                                                            Log.w("MAPS", "getUser:onCancelled", databaseError.toException());
-                                                        }
-                                                    });
                                                 }
-                                            }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                                Log.w("MAPS", "getUser:onCancelled", databaseError.toException());
-                                            }
-                                        });
-                                    }
-                                }
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                                                }
+                                            });
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.w("MAPS", "getUser:onCancelled", databaseError.toException());
+
                                 }
-                            });
+                            }
+
 
                         }
+
                     }
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MY_LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
-                    permissions[0] == android.Manifest.permission.ACCESS_FINE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //mMap.setMyLocationEnabled(true);
-                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    mMap.setMyLocationEnabled(true);
-
-                    // Acquire a reference to the system Location Manager
-                    final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-                    // Define a listener that responds to location updates
-                    LocationListener locationListener = new LocationListener() {
-                        public void onLocationChanged(Location location) {
-                            // Called when a new location is found by the network location provider.
-                            updateLocation(location);
-                            LatLng newloc = new LatLng(location.getLatitude(), location.getLongitude());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(newloc));
-                            mMap.animateCamera(CameraUpdateFactory.zoomTo(16.0f));
-                        }
-
-                        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-                        public void onProviderEnabled(String provider) {}
-
-                        public void onProviderDisabled(String provider) {}
-                    };
-
-                    if (mMap.isMyLocationEnabled()){
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                     }
-                }
-            } else {
-                // Permission was denied. Display an error message.
-            }
-        }
+                });
+
+
     }
 
-    public String getUid() {return FirebaseAuth.getInstance().getCurrentUser().getUid();}
 
-    //update own location in the database for buddy to see it
-    public void updateLocation(final Location location){
-        mDatabase.child("users").child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mUser = dataSnapshot.getValue(User.class);
+//    public void showProgressDialog() {
+//        if (mProgressDialog == null) {
+//            mProgressDialog = new ProgressDialog(getActivity());
+//            mProgressDialog.setCancelable(false);
+//            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            mProgressDialog.setMessage("Loading...");
+//        }
+//
+//        mProgressDialog.show();
+//    }
+//
+//    public void hideProgressDialog() {
+//        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+//            mProgressDialog.dismiss();
+//        }
+//    }
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        mAuth.addAuthStateListener(mAuthListener);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        mAuth.removeAuthStateListener(mAuthListener);
+//    }
+//
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        // Inflate the layout for this fragment
+//        View view = inflater.inflate(R.layout.fragment_online_sign_in, container, false);
+//
+//        mAuth = FirebaseAuth.getInstance();
+//
+//        mAuthListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                FirebaseUser user = firebaseAuth.getCurrentUser();
+//                if (user != null) {
+//                    // User is signed in
+//                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+//                } else {
+//                    // User is signed out
+//                    Log.d(TAG, "onAuthStateChanged:signed_out");
+//                }
+//                // ...
+//            }
+//        };
+//
+//        // Configure Google Sign In
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        //getting persisted state
+//        if (savedInstanceState!=null){
+//            mEmailEditText.setText(savedInstanceState.getString("EMAIL"));
+//            mPasswordEditText.setText(savedInstanceState.getString("PASSWORD"));
+//        }
+//
+//        //onClick listener for the signIn button - checks for valid login information
+//        //mSignInButton = (Button)view.findViewById(R.id.button_sign_in);
+//        mSignInButton = (FancyButton)view.findViewById(R.id.button_sign_in);
+//        mSignInButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!isValidEmail(mEmailEditText.getText())){
+//                    Toast.makeText(getActivity(), "Enter a valid email",Toast.LENGTH_SHORT).show();
+//                }
+//                else if(!isValidPassword(mPasswordEditText.getText())){
+//                    Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//
+//                //check for valid user and start the profile activity
+//                else{
+//                    mLoginEmail = mEmailEditText.getText().toString();
+//                    mLoginPassword = mPasswordEditText.getText().toString();
+//                    showProgressDialog();
+//
+//                    //Try to authenticate the user's credentials
+//                    mAuth.signInWithEmailAndPassword(mLoginEmail, mLoginPassword)
+//                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<AuthResult> task) {
+//                                    Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+//                                    hideProgressDialog();
+//                                    // If sign in fails, display a message to the user. If sign in succeeds
+//                                    // the auth state listener will be notified and logic to handle the
+//                                    // signed in user can be handled in the listener.
+//                                    if (!task.isSuccessful()) {
+//                                        Log.w(TAG, "signInWithEmail", task.getException());
+//                                        Toast.makeText(getActivity().getBaseContext(), "Authentication failed.",
+//                                                Toast.LENGTH_SHORT).show();
+//                                    }
+//
+//                                    else{
+//                                        Intent intent = new Intent(getActivity(), MainActivity.class);
+//                                        //hardcode bs here
+//                                        intent.putExtra(IntentParam.ANALYZE,1);
+//                                        startActivity(intent);
+//                                    }
+//                                }
+//                            });
+//
+//                }
+//            }
+//        });
+//
+//
+//        return view;
+//    }
 
-                // [START_EXCLUDE]
-                if (mUser == null) {
-                    // User is null, error out
-                    Log.e("MAPS", "User " + getUid() + " is unexpectedly null");
-                    Toast.makeText(MapsActivity.this,
-                            "Error: could not fetch user.",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    mUser.setLat(location.getLatitude());
-                    mUser.setLon(location.getLongitude());
-                    mDatabase.child("users").child(getUid()).child("lat").setValue(mUser.getLat());
-                    mDatabase.child("users").child(getUid()).child("lon").setValue(mUser.getLon());
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("MAPS", "getUser:onCancelled", databaseError.toException());
-            }
-        });
-    }
 
 
 }

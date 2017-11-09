@@ -61,7 +61,7 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
         message = getIntent().getStringExtra("PRESETTEXT");
         call = getIntent().getStringExtra("PRESETCALL");
 
-        buddyLocation = getIntent().getBooleanExtra("BUDDYCHECKED", false);
+        buddyLocation = getIntent().getBooleanExtra("BUDDYCHECKED", true);
         useText = getIntent().getBooleanExtra("TEXTCHECKED", false);
         useCall = getIntent().getBooleanExtra("CALLCHECKED", false);
 

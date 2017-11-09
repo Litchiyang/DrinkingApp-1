@@ -187,7 +187,7 @@ public class OnlineSignInFragment extends Fragment {
                                     else{
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
                                         //hardcode bs here
-                                        intent.putExtra(IntentParam.ANALYZE,1);
+                                        intent.putExtra(IntentParam.ANALYZE, 1);
                                         startActivity(intent);
                                     }
                                 }
