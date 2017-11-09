@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.StringSignature;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -123,7 +125,7 @@ public class OnlineProfileFragment extends Fragment {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d(TAG,"Viewing User"+mUser.getID());
+                            Log.d(TAG,"Viewing User "+mUser.getID());
                             //setting appropriate information in the widgets according to the user's attributes
                             mFullnameTextView.setText(mUser.getFirstname()+" "+mUser.getLastname());
                             mEmailTextView.setText(mUser.getEmail());
@@ -225,9 +227,11 @@ public class OnlineProfileFragment extends Fragment {
 
 
     private void loadPic(){
+        Log.d(TAG,"loading image:"+mUserStorageRef);
         Glide.with(getActivity() /* context */)
                 .using(new FirebaseImageLoader())
                 .load(mUserStorageRef)
+                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
                 .into(mProfilePicture);
     }
 

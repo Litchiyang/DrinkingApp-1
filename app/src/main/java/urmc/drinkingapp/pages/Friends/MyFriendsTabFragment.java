@@ -27,6 +27,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.database.FirebaseRecyclerAdapter;
 import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
@@ -38,19 +40,21 @@ import urmc.drinkingapp.pages.FriendsViewHolder;
  */
 public class MyFriendsTabFragment extends Fragment {
 
+    private final static String TAG = "MyFriendsTabFragment";
+
     //instance of the recylcer view
     private RecyclerView mRecyclerView;
+
+    private DatabaseReference mDatabase;
 
     //private DrinkingAppCollection mCollection;
     private FirebaseRecyclerAdapter mAdapter;
 
-    // [START declare_database_ref]
-    private DatabaseReference mDatabase;
-    // [END declare_database_ref]
     private DatabaseReference mFriendReference;
     public DatabaseReference mUserReference;
     public DatabaseReference mBuddyReference;
     private StorageReference mUserStorageRef;
+    private FirebaseDAO dao;
 
 
     public MyFriendsTabFragment() {
@@ -82,20 +86,19 @@ public class MyFriendsTabFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_friends_tab, container, false);
-
+        dao = new FirebaseDAO();
         // [START initialize_database_ref]
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
 
         //sets up the recycler view
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view_my_friends);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mDatabase.child("users").child(getUid()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
+        dao.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null){
-                    Log.d("FRIENDS",dataSnapshot.toString());
+                    Log.d(TAG,"onDataChange dataSnapshot is null. "+dataSnapshot.toString());
                 }else{
                     OnlineUpdateUI();
                 }
@@ -110,14 +113,13 @@ public class MyFriendsTabFragment extends Fragment {
         return view;
     }
 
-    //Get Current user's UID from the database
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private String getUid(){
+        return Utils.getUid();
     }
 
-    public Query getQuery(DatabaseReference databaseReference) {
-        // All my friends
-        Query q = databaseReference.child("users").child(getUid()).child("friends");
+    public Query getFriendsQuery() {
+        //Query used to find list
+        Query q = dao.getFriendsDatabase().child(Utils.getUid());
         Log.d("QUERY",q.toString());
         return q;
     }
@@ -127,11 +129,11 @@ public class MyFriendsTabFragment extends Fragment {
 
         showProgressDialog();
         //mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder, FriendsViewHolder.class, getQuery(mDatabase))
-        mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder_add_buddy, FriendsViewHolder.class, getQuery(mDatabase)) {
+        mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder_add_buddy, FriendsViewHolder.class, getFriendsQuery()) {
             @Override
             public void populateViewHolder(FriendsViewHolder FriendProfileHolder, User user, int position) {
                 //FriendProfileHolder.bindUser(user);
-                Log.d("LOAD FRIENDS","Friends Tab");
+                Log.d(TAG,"OnlineUpdateUI() -> populateViewHolder()");
                 hideProgressDialog();
 
                 final DatabaseReference postRef = getRef(position);
@@ -143,10 +145,10 @@ public class MyFriendsTabFragment extends Fragment {
                 final FriendsViewHolder myView = FriendProfileHolder;
 
                 mBuddyReference = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(getUid()).child("buddy");
+                        .child("users").child(Utils.getUid()).child("buddy");
 
                 mFriendReference = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(getUid()).child("friends").child(postKey);
+                        .child("users").child(Utils.getUid()).child("friends").child(postKey);
                 mUserStorageRef = FirebaseStorage.getInstance().getReference().child(postKey);
                 showProgressDialog();
                 mFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -241,7 +243,7 @@ public class MyFriendsTabFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         mFriendReference = FirebaseDatabase.getInstance().getReference()
-                                .child("users").child(getUid()).child("friends").child(postKey);
+                                .child("users").child(Utils.getUid()).child("friends").child(postKey);
                         showProgressDialog();
                         mFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -336,41 +338,6 @@ public class MyFriendsTabFragment extends Fragment {
             }
         };
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-
-    public User mFriend;
-    public User getUserFromSnapshot(DataSnapshot snapshot){
-        String key = snapshot.getKey();
-        // Initialize Database
-        mUserReference = FirebaseDatabase.getInstance().getReference()
-                .child("users").child(key);
-
-        showProgressDialog();
-        mUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get user value
-                Log.d("PROFILE",dataSnapshot.toString());
-                mFriend = dataSnapshot.getValue(User.class);
-                hideProgressDialog();
-                // [START_EXCLUDE]
-                if (mFriend == null) {
-                    // User is null, error out
-                    Log.e("FriendsTAB", "User is unexpectedly null");
-                    Toast.makeText(getActivity(),
-                            "Error: could not fetch user.",
-                            Toast.LENGTH_SHORT).show();
-                }
-                // [END_EXCLUDE]
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("FriendsTAB", "getUser:onCancelled", databaseError.toException());
-            }
-        });
-        return mFriend;
     }
 
 

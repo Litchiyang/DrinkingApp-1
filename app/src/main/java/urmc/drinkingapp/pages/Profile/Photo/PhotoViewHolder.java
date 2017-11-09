@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Profile.Photo;
 
 import android.app.Activity;
 import android.content.Context;

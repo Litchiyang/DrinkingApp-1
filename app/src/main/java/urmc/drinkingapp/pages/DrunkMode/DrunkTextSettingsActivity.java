@@ -1,14 +1,14 @@
-package urmc.drinkingapp;
+package urmc.drinkingapp.pages.DrunkMode;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import urmc.drinkingapp.MainActivity;
+import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.IntentParam;
 
 public class DrunkTextSettingsActivity extends AppCompatActivity {
 
@@ -34,7 +34,7 @@ public class DrunkTextSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent i = new Intent(DrunkTextSettingsActivity.this, MainActivity.class);
-                i.putExtra("ANALYZETEXT", 1);
+                i.putExtra(IntentParam.ANALYZE, 1);
                 startActivity(i);
                 finish();
             }
@@ -45,7 +45,7 @@ public class DrunkTextSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent i = new Intent(DrunkTextSettingsActivity.this, MainActivity.class);
-                i.putExtra("ANALYZETEXT", 0);
+                i.putExtra(IntentParam.ANALYZE, 0);
                 startActivity(i);
                 finish();
             }

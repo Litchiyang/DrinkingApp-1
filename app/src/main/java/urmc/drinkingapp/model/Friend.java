@@ -36,4 +36,9 @@ public class Friend {
     public void setFriendStatus(int friend) {
         friendStatus = friend;
     }
+
+    public String toString(){
+        return "{ friendID:"+friendID+", "+"friendStatus:"+friendStatus+"}";
+    }
 }
+

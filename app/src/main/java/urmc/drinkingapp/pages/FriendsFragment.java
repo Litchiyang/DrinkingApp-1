@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -27,7 +28,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import urmc.drinkingapp.R;
-import urmc.drinkingapp.database.FirebaseRecyclerAdapter;
 import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
 

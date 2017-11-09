@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import mehdi.sakout.fancybuttons.FancyButton;
-import urmc.drinkingapp.DrunkTextSettingsActivity;
 import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.IntentParam;
@@ -35,7 +34,7 @@ import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
 /**
  * Fragment to sign in into the app. Uses online authentication against the firebase database
  */
-public class OnlineSignInFragment extends Fragment {
+public class SignInFragment extends Fragment {
 
     public interface SignUpProcess{
         void SignUpStarted();
@@ -60,12 +59,12 @@ public class OnlineSignInFragment extends Fragment {
     private String mLoginPassword;
     private User mLoginUser;
 
-    String TAG = "OnlineSignInFragment";
+    String TAG = "SignInFragment";
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    public OnlineSignInFragment() {
+    public SignInFragment() {
         // Required empty public constructor
     }
 

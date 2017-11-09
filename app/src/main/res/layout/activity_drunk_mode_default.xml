@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="urmc.drinkingapp.DrunkModeDefaultActivity">
+    tools:context="urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity">
 
     <ng.max.slideview.SlideView
         android:id="@+id/switch_drunk_mode_default_activity"

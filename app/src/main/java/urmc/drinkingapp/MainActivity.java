@@ -15,6 +15,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -34,7 +38,10 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
+import urmc.drinkingapp.control.Utils;
+import urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
 import urmc.drinkingapp.pages.Profile.ProfileActivity;
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     Cursor cursor;
 
     private GraphView mGraph;
+    private FirebaseDAO dao;
 
 
     @Override
@@ -68,19 +76,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         //Obtain the FirebaseAnalytics instance - Initial tests with the Firabase framework
         //More useful information can be placed here to analyze how the user is using the app
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bundle = new Bundle();
-//        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "test");
-//        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Alessandro Incerto");
-//        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
+
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
+        dao = new FirebaseDAO();
+        Query q = dao.getFriendsDatabase().child(Utils.getUid());
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG,"test query q:"+dataSnapshot.getValue());
+                final HashMap<String,Integer> friendMap = new HashMap<String, Integer>();
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    friendMap.put(ds.getKey(),((Long)ds.getValue()).intValue());
+                }
+                Query qq = dao.getUserDatabase();
+                qq.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds : dataSnapshot.getChildren()){
+                            Log.d(TAG,"SECOND LAYER"+ds);
+                            if(friendMap.containsKey(ds.getKey())){
+                                Log.d(TAG,"friendmap:"+ds.getKey()+":"+friendMap.get(ds.getKey())+ds);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
 
+        Log.d(TAG,"test query:"+q.toString());
         //Set up initial empty graph
 //        mGraph = (GraphView) findViewById(R.id.main_activity_graph);
 //        mGraph.getGridLabelRenderer().setNumVerticalLabels(3);

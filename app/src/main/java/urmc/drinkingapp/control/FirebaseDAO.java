@@ -21,8 +21,10 @@ import urmc.drinkingapp.model.User;
 
 /**
  * For easier access to firebase
- * supports basic CRUD operations
- * get methods can not be implemented due to firebase does not supporting synchronous request.
+ * supports basic CRUD operations except Read
+ * get methods can not be implemented due to firebase does not supporting synchronous request,
+ * but since get methods are rarely used(hopefully), this class should be good enough.
+ * Use this class for firebase interaction
  */
 
 public class FirebaseDAO {
@@ -30,7 +32,6 @@ public class FirebaseDAO {
     private static DatabaseReference mDatabase;
     private static DatabaseReference mFriendDB;
     private static DatabaseReference mUserDB;
-    private User UserCursor;
     private String stringCursor;
     private Friend friendCursor;
     private User userCursor;
@@ -52,36 +53,30 @@ public class FirebaseDAO {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mUserDB = mDatabase.child("users");
         mFriendDB = mDatabase.child("friends");
-
-        mUserDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-                    Log.d(TAG,userSnapshot.getKey());
-//                    User tempUser = userSnapshot.getValue(User.class);
-//                    if(tempUser.getID().equals(mCurrentUser.getID().toString())){
-//                        mCurrentUser = tempUser;
-//                    }
-//                    userList.add(tempUser);
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG,"Connection Failed");
-            }
-        });
-
-        mFriendDB.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG,"Connection Failed");
-            }
-        });
+//        mUserDB.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+//                    Log.d(TAG,userSnapshot.getKey());
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.e(TAG,"Connection Failed");
+//            }
+//        });
+//
+//        mFriendDB.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.e(TAG,"Connection Failed");
+//            }
+//        });
     }
 
     public void updateUser(User user){
@@ -95,6 +90,13 @@ public class FirebaseDAO {
         String id = user.getID();
         mUserDB.child(id).setValue(user);
     }
+
+    public void deleteUser(User user){
+        this.userCursor = user;
+        mUserDB.child(userCursor.getID()).removeValue();
+    }
+
+
     public void setFriend(String userID, Friend friend){
         mFriendDB.child(userID).child(friend.getfriendID()).setValue(friend.getFriendStatus());}
 
