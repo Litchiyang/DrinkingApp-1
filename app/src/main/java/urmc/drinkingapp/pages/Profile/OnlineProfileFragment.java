@@ -14,9 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.signature.StringSignature;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,10 +27,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.security.MessageDigest;
+
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
-import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.model.User;
 
 
@@ -227,11 +229,10 @@ public class OnlineProfileFragment extends Fragment {
 
 
     private void loadPic(){
+        RequestOptions ro = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true);
         Log.d(TAG,"loading image:"+mUserStorageRef);
-        Glide.with(getActivity() /* context */)
-                .using(new FirebaseImageLoader())
+        Glide.with(getContext() /* context */)
                 .load(mUserStorageRef)
-                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
                 .into(mProfilePicture);
     }
 

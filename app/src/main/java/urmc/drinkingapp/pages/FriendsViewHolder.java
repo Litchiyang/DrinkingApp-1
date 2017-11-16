@@ -2,6 +2,7 @@ package urmc.drinkingapp.pages;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +21,8 @@ import urmc.drinkingapp.model.User;
 
 public class FriendsViewHolder extends RecyclerView.ViewHolder{
 
+    private static final String TAG = "FriendsViewHolder";
+
     //widgets
     public ImageView mProfilePic;
     public TextView mUserName;
@@ -32,6 +35,7 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
     public FriendsViewHolder(View view){
         super(view);
         //Wire Widgets
+        Log.d(TAG,"consructor()");
         mProfilePic = (ImageView)view.findViewById(R.id.image_view_profile_pic_friends_view_holder);
         mUserName = (TextView)view.findViewById(R.id.text_view_friend_name_friends_view_holder);
         mAddFriendButton = (FancyButton) view.findViewById(R.id.button_add_friend_view_holder);

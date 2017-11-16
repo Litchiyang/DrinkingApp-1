@@ -15,21 +15,22 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.Utils;
-import urmc.drinkingapp.database.FirebaseRecyclerAdapter;
 import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
 import urmc.drinkingapp.pages.FriendsViewHolder;
@@ -70,7 +71,6 @@ public class MyFriendsTabFragment extends Fragment {
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.setMessage("Loading...");
         }
-
         mProgressDialog.show();
     }
 
@@ -80,35 +80,54 @@ public class MyFriendsTabFragment extends Fragment {
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_friends_tab, container, false);
-        dao = new FirebaseDAO();
+
         // [START initialize_database_ref]
+        dao = new FirebaseDAO();
         // [END initialize_database_ref]
 
         //sets up the recycler view
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view_my_friends);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<User>().setIndexedQuery(getFriendsQuery(),mDatabase,User.class).build();
 
-        dao.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null){
-                    Log.d(TAG,"onDataChange dataSnapshot is null. "+dataSnapshot.toString());
-                }else{
-                    OnlineUpdateUI();
-                }
+            public FriendsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                Log.d(TAG,"OnlineUpdateUI()-onCreateViewHolder()");
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.friends_view_holder_add_buddy, parent, false);
+                return new FriendsViewHolder(view);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            protected void onBindViewHolder(FriendsViewHolder holder, int position, User model) {
+                Log.d(TAG,"OnlineUpdateUI()-onBindViewHolder()");
             }
-        });
+        };
+        mRecyclerView.setAdapter(mAdapter);
+
+//        OnlineUpdateUI();
+//        dao.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.getValue() == null){
+//                    Log.d(TAG,"onDataChange dataSnapshot is null. "+dataSnapshot.toString());
+//                }else{
+//                    OnlineUpdateUI();
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
         return view;
     }
@@ -119,22 +138,36 @@ public class MyFriendsTabFragment extends Fragment {
 
     public Query getFriendsQuery() {
         //Query used to find list
-        Query q = dao.getFriendsDatabase().child(Utils.getUid());
-        Log.d("QUERY",q.toString());
+        Query q = FirebaseDatabase.getInstance().getReference().child("users").limitToLast(5);
+        Log.d(TAG,"QUERY"+q.toString());
         return q;
     }
 
-    //Get friends from the database and display them in the recyclerView
+    /*
+    * For full documentation see:
+    * https://firebaseui.com/docs/android/com/firebase/ui/FirebaseRecyclerViewAdapter.html
+    * Get the users friends from the friends table,
+    * then search all the friends by id in the user table
+    * */
     public void OnlineUpdateUI(){
-
         showProgressDialog();
-        //mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder, FriendsViewHolder.class, getQuery(mDatabase))
+        Log.d(TAG,"OnlineUpdateUI()");
+        // TODO: 2017/11/6 clean up this part
+
+        Log.d(TAG,"OnlineUpdateUI()-?");
+        Log.d(TAG,"after creating FirebaseRecyclerOptions");
+
+        hideProgressDialog();
+        Log.d(TAG,"line 160");
+
+/*
         mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder_add_buddy, FriendsViewHolder.class, getFriendsQuery()) {
             @Override
             public void populateViewHolder(FriendsViewHolder FriendProfileHolder, User user, int position) {
-                //FriendProfileHolder.bindUser(user);
+//                //FriendProfileHolder.bindUser(user);
                 Log.d(TAG,"OnlineUpdateUI() -> populateViewHolder()");
                 hideProgressDialog();
+
 
                 final DatabaseReference postRef = getRef(position);
 
@@ -159,30 +192,28 @@ public class MyFriendsTabFragment extends Fragment {
                         if (dataSnapshot.getValue()==null){
                             //mAreWeFriends = false;
                         }else {
-                            //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
+                            //mAreWeFriends = dataSnapshot.getValue();
                             if (dataSnapshot.getValue(Boolean.class)){
                                 myView.mAddFriendButton.setText("-");
                                 myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
                                 myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
                             }
 
-
-
                             FirebaseDatabase.getInstance().getReference()
                                     .child("users").child(postKey).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     User user = dataSnapshot.getValue(User.class);
-                                    if (mFriend == null) {
+                                    if (user == null) {
                                         // User is null, error out
-                                        Log.e("FriendsTAB", "User is unexpectedly null");
+                                        Log.e(TAG,"FriendsTAB User is unexpectedly null");
                                         Toast.makeText(getActivity(),
                                                 "Error: could not fetch user.",
                                                 Toast.LENGTH_SHORT).show();
                                     }else{
                                         myView.bindUser(user);
                                         if(!user.getProfilePic().equals("none")) {
-                                            Glide.with(getActivity() /* context */)
+                                            Glide.with(getActivity() )
                                                     .using(new FirebaseImageLoader())
                                                     .load(mUserStorageRef)
                                                     .into(myView.mProfilePic);
@@ -287,6 +318,7 @@ public class MyFriendsTabFragment extends Fragment {
                     }
                 });
 
+                //this part will throw nullpointer error
                 FriendProfileHolder.mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -337,48 +369,16 @@ public class MyFriendsTabFragment extends Fragment {
                 });
             }
         };
-        mRecyclerView.setAdapter(mAdapter);
+        */
+
+//        mRecyclerView.setAdapter(mAdapter);
+
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        mDatabase.child("users").child(getUid()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null){
-                    Log.d("FRIENDS",dataSnapshot.toString());
-                }else{
-                    OnlineUpdateUI();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
-    public void updateView(){
-        // [START initialize_database_ref]
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
-        mDatabase.child("users").child(getUid()).child("friends").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null){
-                    Log.d("FRIENDS",dataSnapshot.toString());
-                }else{
-                    OnlineUpdateUI();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 }

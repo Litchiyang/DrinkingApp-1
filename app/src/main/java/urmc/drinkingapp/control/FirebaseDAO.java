@@ -92,13 +92,11 @@ public class FirebaseDAO {
     }
 
     public void deleteUser(User user){
-        this.userCursor = user;
-        mUserDB.child(userCursor.getID()).removeValue();
+        mUserDB.child(user.getID()).removeValue();
     }
 
-
     public void setFriend(String userID, Friend friend){
-        mFriendDB.child(userID).child(friend.getfriendID()).setValue(friend.getFriendStatus());}
+        mFriendDB.child(userID).child(friend.getfriendID()).setValue(friend);}
 
     //update the relation of a friend
     public void updateFriend(String userID, Friend friend){
@@ -109,8 +107,8 @@ public class FirebaseDAO {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(stringCursor).exists()){
                     Map<String,Object> taskMap = new HashMap<>();
-                    taskMap.put(friendCursor.getfriendID(),friendCursor.getFriendStatus());
-                    mFriendDB.child(stringCursor).updateChildren(taskMap);
+                    taskMap.put("friendStatus",friendCursor.getFriendStatus());
+                    mFriendDB.child(stringCursor).child(friendCursor.getfriendID()).updateChildren(taskMap);
                 }
             }
             @Override
@@ -121,9 +119,6 @@ public class FirebaseDAO {
     }
 
     public void deleteFriend(String userID, String friendId){
-        this.stringCursor = userID;
-        this.friendCursor = new Friend();
-        friendCursor.setfriendID(friendId);
         mFriendDB.child(userID).child(friendId).removeValue();
     }
 

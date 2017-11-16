@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.MalformedJsonException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.signature.StringSignature;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.bumptech.glide.load.Key;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.EmptySignature;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +36,9 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.MessageDigest;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
@@ -232,6 +238,7 @@ public class OnlineEditProfileFragment extends Fragment {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                     @SuppressWarnings("VisibleForTests")
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    Log.d(TAG,"uploadPic() success with uri:"+downloadUrl);
                 }
             });
         }
@@ -241,10 +248,11 @@ public class OnlineEditProfileFragment extends Fragment {
     }
 
     private void loadPic(){
+        Log.d(TAG,"loading image:"+mUserStorageRef);
+        RequestOptions ro = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true);
         Glide.with(getActivity() /* context */)
-                .using(new FirebaseImageLoader())
                 .load(mUserStorageRef)
-                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                .apply(ro)
                 .into(mProfilePicImageView);
     }
 

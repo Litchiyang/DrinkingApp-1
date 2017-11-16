@@ -32,12 +32,12 @@ public class FriendsViewPagerActivity extends AppCompatActivity {
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
                     new MyFriendsTabFragment(),
-                    new SearchTabFragment(),
+//                    new SearchTabFragment(),
 
                     //new FriendsBuddyTabFragment(),
             };
             private final String[] mFragmentNames = new String[] {
-                    getString(R.string.heading_search_friends),
+//                    getString(R.string.heading_search_friends),
                     getString(R.string.heading_friends),
             };
             @Override

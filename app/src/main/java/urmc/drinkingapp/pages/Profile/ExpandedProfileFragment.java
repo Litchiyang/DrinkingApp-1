@@ -262,7 +262,6 @@ public class ExpandedProfileFragment extends Fragment {
     //Loads profile picture from the Firebase Storage
     private void loadPic(){
         Glide.with(getActivity() /* context */)
-                .using(new FirebaseImageLoader())
                 .load(mUserStorageRef)
                 .into(mProfilePicture);
     }

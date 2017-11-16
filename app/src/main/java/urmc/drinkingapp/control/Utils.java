@@ -2,7 +2,9 @@ package urmc.drinkingapp.control;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -12,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 // TODO: 2017/8/2  migrate reusable methods to here
 public class Utils {
+    public static final String TAG = "Utils";
 
     //method to fix pictures to be displayed in the app
     public static Bitmap getScaledBitmap(String path, int width, int height) {
@@ -33,4 +36,5 @@ public class Utils {
     }
 
     public static String getUid() {return FirebaseAuth.getInstance().getCurrentUser().getUid();}
+
 }

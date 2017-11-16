@@ -39,29 +39,22 @@ import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
 
 public class FriendsFragment extends Fragment {
 
+    private final static String TAG = "FriendsFragment";
+
     //instance of the recylcer view
     private RecyclerView mRecyclerView;
-
     //private DrinkingAppCollection mCollection;
     private FirebaseRecyclerAdapter mAdapter;
-
-
     private String mQuery;
-
     private Context mContext;
-
-    // [START declare_database_ref]
     private DatabaseReference mDatabase;
-    // [END declare_database_ref]
 
     //Reference to the user's friends
     private DatabaseReference mFriendReference;
 
     //reference to the database storage to load the profile pictures of the different users
     private StorageReference mUserStorageRef;
-
     private boolean mAreWeFriends;
-
     //private NoResultsProcess mListener;
 
     public FriendsFragment() {
@@ -82,7 +75,6 @@ public class FriendsFragment extends Fragment {
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.setMessage("Loading...");
         }
-
         mProgressDialog.show();
     }
 
@@ -113,12 +105,11 @@ public class FriendsFragment extends Fragment {
         mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view_friends);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
         //getting arguments being passed - Used when we have to display the results of a search
         Bundle args = getArguments();
         if(args!=null){
             mQuery = args.getString("QUERY");
-            OnlineUpdateUI(doMySearch(mQuery));
+            Log.d(TAG,mQuery);
         }else {
             OnlineUpdateUI();
         }
@@ -139,134 +130,13 @@ public class FriendsFragment extends Fragment {
     }
 
     public void OnlineUpdateUI(){
-        mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder, FriendsViewHolder.class, getQuery(mDatabase)) {
-            @Override
-            public void populateViewHolder(FriendsViewHolder FriendProfileHolder, User user, int position) {
-                FriendProfileHolder.bindUser(user);
-            }
-        };
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    //Load Friends and populate the list
-    public void OnlineUpdateUI(Query query){
-        showProgressDialog();
-        mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder, FriendsViewHolder.class, query) {
-            @Override
-            public void populateViewHolder(FriendsViewHolder FriendProfileHolder, User user, int position) {
-                FriendProfileHolder.bindUser(user);
-                hideProgressDialog();
-
-                final DatabaseReference postRef = getRef(position);
-
-                // Set click listener for the whole post view
-                final String postKey = postRef.getKey();
-                //Log.d("FrList",postKey);
-
-                final FriendsViewHolder myView = FriendProfileHolder;
-
-                //try to obtain that user from list of friends
-                mFriendReference = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(getUid()).child("friends").child(postKey);
-                //get that user's profile picture
-                mUserStorageRef = FirebaseStorage.getInstance().getReference().child(postKey);
-
-                showProgressDialog();
-                if(!user.getProfilePic().equals("none")) {
-                    Glide.with(getActivity() /* context */)
-                            .using(new FirebaseImageLoader())
-                            .load(mUserStorageRef)
-                            .into(myView.mProfilePic);
-                }
-
-                //check if user is a friend and update view accordingly
-                mFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        Log.d("List Dis BUTTON",dataSnapshot.toString());
-                        if (dataSnapshot.getValue()==null){
-                            mAreWeFriends = false;
-                        }else {
-                            mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                            if (dataSnapshot.getValue(Boolean.class)){
-                                myView.mAddFriendButton.setText("-");
-                                myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
-                            }
-                        }
-                        hideProgressDialog();
-                        // [START_EXCLUDE]
-                        // [END_EXCLUDE]
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("IsFrList", "getUser:onCancelled", databaseError.toException());
-                    }
-                });
-
-                //expand profile onClick
-                FriendProfileHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), ExpandedProfileActivity.class);
-                        intent.putExtra("KEY", postKey);
-                        startActivity(intent);
-                    }
-                });
-
-                //check if user is a friend and react accordingly when addfriend button is clicked - It converts to a deleteFriend button is user is already a friend
-                FriendProfileHolder.mAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mFriendReference = FirebaseDatabase.getInstance().getReference()
-                                .child("users").child(getUid()).child("friends").child(postKey);
-                        showProgressDialog();
-                        mFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                // Get user value
-                                Log.d("List Dis BUTTON",dataSnapshot.toString());
-                                if (dataSnapshot.getValue()==null){
-                                    mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(true);
-                                    mDatabase.child("users").child(postKey).child("friends").child(getUid()).setValue(true);
-                                    myView.mAddFriendButton.setText("-");
-                                    myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                    myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
-                                }else {
-                                    mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                                    if (dataSnapshot.getValue(Boolean.class)){
-                                        //mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(false);
-                                        mDatabase.child("users").child(getUid()).child("friends").child(postKey).removeValue();
-                                        mDatabase.child("users").child(postKey).child("friends").child(getUid()).removeValue();
-                                        myView.mAddFriendButton.setText("+");
-                                        myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ff5a5f"));
-                                        myView.mAddFriendButton.setTextColor(Color.parseColor("#ffffff"));
-                                    }else{
-                                        mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(true);
-                                        mDatabase.child("users").child(postKey).child("friends").child(getUid()).setValue(true);
-                                        myView.mAddFriendButton.setText("-");
-                                        myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                        myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
-                                    }
-                                }
-                                hideProgressDialog();
-                                // [START_EXCLUDE]
-                                // [END_EXCLUDE]
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.w("IsFrList", "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
-                    }
-                });
-            }
-        };
-        mRecyclerView.setAdapter(mAdapter);
+//        mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder, FriendsViewHolder.class, getQuery(mDatabase)) {
+//            @Override
+//            public void populateViewHolder(FriendsViewHolder FriendProfileHolder, User user, int position) {
+//                FriendProfileHolder.bindUser(user);
+//            }
+//        };
+//        mRecyclerView.setAdapter(mAdapter);
     }
 
     //Perform search on the database using the queryText

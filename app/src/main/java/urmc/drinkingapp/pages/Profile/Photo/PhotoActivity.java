@@ -38,7 +38,6 @@ public class PhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo);
 
 
-
         mPhotoFragment = new PhotoFragment(); //initializes the photofragment
 
         //gets all the files from external storage as an array, coverts the array into a list and then calls a method in the fragment that convers the List of files
@@ -59,7 +58,6 @@ public class PhotoActivity extends AppCompatActivity {
         mPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (ContextCompat.checkSelfPermission(PhotoActivity.this, Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
                     takePicture(v);
@@ -69,8 +67,6 @@ public class PhotoActivity extends AppCompatActivity {
                             new String[]{Manifest.permission.CAMERA},
                             MY_CAMERA_REQUEST_CODE);
                 }
-
-
             }
         });
 

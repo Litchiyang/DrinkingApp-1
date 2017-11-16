@@ -195,7 +195,7 @@ public class SignInFragment extends Fragment {
                 }
             }
         });
-
+        mSignInButton.callOnClick();
         //listener for the signUp button - starts the signUp Fragment
         //mSignUpButton = (Button)view.findViewById(R.id.button_sign_up);
         mSignUpButton = (FancyButton) view.findViewById(R.id.button_sign_up);

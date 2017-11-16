@@ -38,12 +38,16 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import ng.max.slideview.Util;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.control.Utils;
+import urmc.drinkingapp.model.Friend;
+import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
+import urmc.drinkingapp.pages.MapsActivity;
 import urmc.drinkingapp.pages.Profile.ProfileActivity;
 
 /**
@@ -71,10 +75,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDAO dao;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         //Obtain the FirebaseAnalytics instance - Initial tests with the Firabase framework
         //More useful information can be placed here to analyze how the user is using the app
@@ -84,31 +91,21 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         dao = new FirebaseDAO();
+        Friend friend = new Friend();
+        friend.setfriendID("VNaOwu9sAVPdtQP6CACAxCU3eK93");
+        friend.setFriendStatus(3);
+        dao.setFriend(Utils.getUid(), friend);
         Query q = dao.getFriendsDatabase().child(Utils.getUid());
         q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG,"test query q:"+dataSnapshot.getValue());
-                final HashMap<String,Integer> friendMap = new HashMap<String, Integer>();
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    friendMap.put(ds.getKey(),((Long)ds.getValue()).intValue());
+//                    Log.d(TAG,"DS IS THIS:"+ds.toString());
+                    Friend f = ds.getValue(Friend.class);
+                    Log.d(TAG,"GETTING USER");
+                    Log.d(TAG,"uid is" + f.getfriendID());
                 }
-                Query qq = dao.getUserDatabase();
-                qq.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for(DataSnapshot ds : dataSnapshot.getChildren()){
-                            Log.d(TAG,"SECOND LAYER"+ds);
-                            if(friendMap.containsKey(ds.getKey())){
-                                Log.d(TAG,"friendmap:"+ds.getKey()+":"+friendMap.get(ds.getKey())+ds);
-                            }
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         mProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+                Intent i = new Intent(MainActivity.this, MapsActivity.class);
                 startActivity(i);
             }
         });

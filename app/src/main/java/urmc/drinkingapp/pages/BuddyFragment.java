@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -115,9 +116,9 @@ public class BuddyFragment extends Fragment {
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
-    public Query getQuery(DatabaseReference databaseReference) {
+    public Query getQuery() {
         // All my friends
-        Query q = databaseReference.child("users").child(getUid()).child("friends");
+        Query q = mDatabase.child("users").child(getUid()).child("friends");
         Log.d(TAG,"getQuery"+q.toString());
         return q;
     }
@@ -126,214 +127,18 @@ public class BuddyFragment extends Fragment {
     public void OnlineUpdateUI(){
 
         showProgressDialog();
-
-        mAdapter = new FirebaseRecyclerAdapter<User, BuddiesViewHolder>(User.class, R.layout.buddies_view_holder, BuddiesViewHolder.class, getQuery(mDatabase)) {
+        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
+                .setQuery(getQuery(), User.class)
+                .build();
+        mAdapter = new FirebaseRecyclerAdapter<User, BuddiesViewHolder>(options){
             @Override
-            public void populateViewHolder(BuddiesViewHolder BuddiesHolder, User user, int position) {
-                //FriendProfileHolder.bindUser(user);
-                Log.d("LOAD FRIENDS","Buddy Tab");
-                hideProgressDialog();
+            public BuddiesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return null;
+            }
 
-                final DatabaseReference postRef = getRef(position);
+            @Override
+            protected void onBindViewHolder(BuddiesViewHolder holder, int position, User model) {
 
-                // Set click listener for the whole post view
-                final String postKey = postRef.getKey();
-                //Log.d("FrList",postKey);
-
-                final BuddiesViewHolder myView = BuddiesHolder;
-
-                mBuddyReference = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(getUid()).child("buddy");
-
-                mFriendReference = FirebaseDatabase.getInstance().getReference()
-                        .child("users").child(getUid()).child("friends").child(postKey);
-
-                mUserStorageRef = FirebaseStorage.getInstance().getReference().child(postKey);
-                showProgressDialog();
-                mFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        Log.d("List Dis BUTTON",dataSnapshot.toString());
-                        if (dataSnapshot.getValue()==null){
-                            //mAreWeFriends = false;
-                        }else {
-                            //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                            if (dataSnapshot.getValue(Boolean.class)){
-                                myView.mAddFriendButton.setText("-");
-                                myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
-                            }
-
-
-
-                            FirebaseDatabase.getInstance().getReference()
-                                    .child("users").child(postKey).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    User user = dataSnapshot.getValue(User.class);
-                                    if (mFriend == null) {
-                                        // User is null, error out
-                                        Log.e("FriendsTAB", "User is unexpectedly null");
-                                        Toast.makeText(getActivity(),
-                                                "Error: could not fetch user.",
-                                                Toast.LENGTH_SHORT).show();
-                                    }else{
-                                        myView.bindUser(user);
-                                        if(!user.getProfilePic().equals("none")) {
-                                            Glide.with(getActivity() /* context */)
-                                                    .using(new FirebaseImageLoader())
-                                                    .load(mUserStorageRef)
-                                                    .into(myView.mProfilePic);
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Log.w("FriendsTAB", "getUser:onCancelled", databaseError.toException());
-                                }
-                            });
-
-
-                            mBuddyReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.getValue()==null){
-                                        //mAreWeFriends = false;
-                                    }else {
-                                        //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                                        if (dataSnapshot.getValue(String.class).equals(postKey)) {
-                                            myView.mAddBuddyButton.setText("Buddy down");
-                                            myView.mAddBuddyButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                            myView.mAddBuddyButton.setTextColor(Color.parseColor("#000000"));
-                                        }
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-                        hideProgressDialog();
-                        // [START_EXCLUDE]
-                        // [END_EXCLUDE]
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("IsFrList", "getUser:onCancelled", databaseError.toException());
-                    }
-                });
-
-                BuddiesHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), ExpandedProfileActivity.class);
-                        intent.putExtra("KEY", postKey);
-                        startActivity(intent);
-                    }
-                });
-
-                BuddiesHolder.mAddFriendButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mFriendReference = FirebaseDatabase.getInstance().getReference()
-                                .child("users").child(getUid()).child("friends").child(postKey);
-                        showProgressDialog();
-                        mFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                // Get user value
-                                Log.d("List Dis BUTTON",dataSnapshot.toString());
-                                if (dataSnapshot.getValue()==null){
-                                    mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(true);
-                                    mDatabase.child("users").child(postKey).child("friends").child(getUid()).setValue(true);
-                                    myView.mAddFriendButton.setText("-");
-                                    myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                    myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
-                                }else {
-                                    //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                                    if (dataSnapshot.getValue(Boolean.class)){
-                                        //mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(false);
-                                        mDatabase.child("users").child(getUid()).child("friends").child(postKey).removeValue();
-                                        mDatabase.child("users").child(postKey).child("friends").child(getUid()).removeValue();
-                                        //TODO If friend being removed is also a buddy have to update this (or not?)
-                                        myView.mAddFriendButton.setText("+");
-                                        myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ff5a5f"));
-                                        myView.mAddFriendButton.setTextColor(Color.parseColor("#ffffff"));
-                                    }else{
-                                        mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(true);
-                                        mDatabase.child("users").child(postKey).child("friends").child(getUid()).setValue(true);
-                                        myView.mAddFriendButton.setText("-");
-                                        myView.mAddFriendButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                        myView.mAddFriendButton.setTextColor(Color.parseColor("#000000"));
-                                    }
-                                }
-                                hideProgressDialog();
-                                // [START_EXCLUDE]
-                                // [END_EXCLUDE]
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.w("IsFrList", "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
-                    }
-                });
-
-                BuddiesHolder.mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mBuddyReference = FirebaseDatabase.getInstance().getReference()
-                                .child("users").child(getUid()).child("buddy");
-                        showProgressDialog();
-                        mBuddyReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                // Get user value
-                                Log.d("List Buddies BUTTON",dataSnapshot.toString());
-                                if (dataSnapshot.getValue()==null){
-                                    mDatabase.child("users").child(getUid()).child("buddy").setValue(postKey);
-                                    mDatabase.child("users").child(postKey).child("buddy").setValue(getUid());
-                                    myView.mAddBuddyButton.setText("Buddy down");
-                                    myView.mAddBuddyButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                    myView.mAddBuddyButton.setTextColor(Color.parseColor("#000000"));
-                                }else {
-                                    //mAreWeFriends = dataSnapshot.getValue(Boolean.class);
-                                    if (dataSnapshot.getValue(String.class).equals(postKey)){
-                                        //mDatabase.child("users").child(getUid()).child("friends").child(postKey).setValue(false);
-                                        mDatabase.child("users").child(getUid()).child("buddy").removeValue();
-                                        mDatabase.child("users").child(postKey).child("buddy").removeValue();
-                                        myView.mAddBuddyButton.setText("Buddy up");
-                                        myView.mAddBuddyButton.setBackgroundColor(Color.parseColor("#ff5a5f"));
-                                        myView.mAddBuddyButton.setTextColor(Color.parseColor("#ffffff"));
-                                    }else{
-                                        mDatabase.child("users").child(dataSnapshot.getValue(String.class)).child("buddy").removeValue();
-                                        mDatabase.child("users").child(getUid()).child("buddy").setValue(postKey);
-                                        mDatabase.child("users").child(postKey).child("buddy").setValue(getUid());
-                                        myView.mAddBuddyButton.setText("Buddy down");
-                                        myView.mAddBuddyButton.setBackgroundColor(Color.parseColor("#ffffff"));
-                                        myView.mAddBuddyButton.setTextColor(Color.parseColor("#000000"));
-                                        OnlineUpdateUI();
-                                    }
-                                }
-                                hideProgressDialog();
-                                // [START_EXCLUDE]
-                                // [END_EXCLUDE]
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.w("IsFrList", "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
-                    }
-                });
             }
         };
         mRecyclerView.setAdapter(mAdapter);
