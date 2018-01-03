@@ -1,4 +1,4 @@
-package urmc.drinkingapp.pages;
+package urmc.drinkingapp.pages.Login;
 
 
 import android.app.ProgressDialog;

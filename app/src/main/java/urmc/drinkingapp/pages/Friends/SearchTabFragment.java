@@ -11,13 +11,19 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.model.User;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.Query;
 
 /**
  * Fragment displaying a SearchView to search for users on the database
  */
 public class SearchTabFragment extends Fragment {
     private static final String TAG = "SearchTabFragment";
+    private FirebaseDAO dao;
 
     public SearchTabFragment() {
         // Required empty public constructor
@@ -27,6 +33,8 @@ public class SearchTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        dao = new FirebaseDAO();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_full_screen_search_tab, container, false);
         Log.d(TAG,"onCreateView");
@@ -40,13 +48,22 @@ public class SearchTabFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(getContext(),"TESTING",Toast.LENGTH_SHORT);
+                Log.d(TAG,"onQueryTextSubmit");
+                Query keyQuery = dao.getUserDatabase().orderByChild("mFirstname").equalTo(query);
+                FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<User>()
+                        .setIndexedQuery(keyQuery,dao.getUserDatabase(),User.class).build();
+
+
+
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                Log.d(TAG,"onQueryTextChange");
+
+                return true;
             }
         });
         return view;

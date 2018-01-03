@@ -60,7 +60,7 @@
 
 
         <!--The app should start here-->
-        <activity android:name=".pages.InitialActitivity"
+        <activity android:name=".pages.Login.InitialActitivity"
             android:theme="@style/DrinkingTheme.NoActionBar">
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />

@@ -1,14 +1,27 @@
 package urmc.drinkingapp.pages;
 
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import ng.max.slideview.Util;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.Utils;
+import urmc.drinkingapp.model.Friend;
 import urmc.drinkingapp.model.User;
 
 /**
@@ -18,7 +31,7 @@ import urmc.drinkingapp.model.User;
 /**
  * View holder for the recycler view displaying all friends
  */
-
+//the layout that maps to this class should be friends_view_holder_add_buddy.xml
 public class FriendsViewHolder extends RecyclerView.ViewHolder{
 
     private static final String TAG = "FriendsViewHolder";
@@ -26,7 +39,8 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
     //widgets
     public ImageView mProfilePic;
     public TextView mUserName;
-    public FancyButton mAddFriendButton;
+    public TextView mPhoneNumber;
+    public FancyButton mUnfriendButton;
     public FancyButton mAddBuddyButton;
 
     private User mUser;
@@ -34,47 +48,96 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
     //constructor - wires up all the widgets
     public FriendsViewHolder(View view){
         super(view);
-        //Wire Widgets
-        Log.d(TAG,"consructor()");
+
         mProfilePic = (ImageView)view.findViewById(R.id.image_view_profile_pic_friends_view_holder);
         mUserName = (TextView)view.findViewById(R.id.text_view_friend_name_friends_view_holder);
-        mAddFriendButton = (FancyButton) view.findViewById(R.id.button_add_friend_view_holder);
-        //Do this null check because from the search results the user cannot add buddies because the resulting users are not
-        //necessarily friends. The user can only add buddies if they're already friends. So only in that case they AddBuddy button will
-        //exists
-        if (view.findViewById(R.id.button_add_buddy_view_holder)!= null){
-            mAddBuddyButton = (FancyButton) view.findViewById(R.id.button_add_buddy_view_holder);
-        }
-        final AppCompatActivity c = (AppCompatActivity)view.getContext();
-        //mCollection = DrinkingAppCollection.get(c);
+        mUnfriendButton = (FancyButton) view.findViewById(R.id.button_unfriend_view_holder);
+        mPhoneNumber = view.findViewById(R.id.text_view_friend_phone_friends_view_holder);
+        mAddBuddyButton = (FancyButton) view.findViewById(R.id.button_add_buddy_view_holder);
 
-        //when an item in the recyclerView is pressed the ExpandedProfileActivity is launched
-        /*
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(c, ExpandedProfileActivity.class);
-                intent.putExtra("EMAIL", mUser.getEmail());
-                c.startActivity(intent);
-            }
-        });*/
+        final AppCompatActivity c = (AppCompatActivity)view.getContext();
+
     }
 
     //bind a user to the viewHolder
-    public void bindUser(User user){
+    public void bindUser(final User user){
         mUser = user;
 
-        /*
         //set up the picture
         String mPath = user.getProfilePic();
         if (!mPath.matches("none")){
-            Bitmap photo = User.getScaledBitmap(mPath, 200, 200);
+            Bitmap photo = Utils.getScaledBitmap(mPath, 200, 200);
             mProfilePic.setImageBitmap(photo);
             mProfilePic.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        }*/
+        }
 
-        //set all the other attributes
         mUserName.setText(user.getFirstname()+" "+user.getLastname());
+        mPhoneNumber.setText(user.getPhoneNumber());
+        final FirebaseDAO dao = new FirebaseDAO();
+        final Friend[] friend = new Friend[1]; // nasty hack to access inner class
+        final DatabaseReference friendEntry = dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID());
+        friendEntry.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Friend f = dataSnapshot.getValue(Friend.class);
+                if(f != null) {
+                    //process based on friend status
+                    String displayText = "";
+                    //TODO: replace these with strings in string.xml
+                    friend[0] = f;
+                    switch (friend[0].getFriendStatus()) {
+                        case Friend.PENDING:
+                            displayText = "Accept request";
+                            break;
+                        case Friend.FRIEND:
+                            displayText = "Buddy Up";
+                            break;
+                        case Friend.BUDDY:
+                            displayText = "Cancel Buddy";
+                            break;
+                        default:
+                            displayText = "Buddy up";
+                    }
+                    mAddBuddyButton.setText(displayText);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+        mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                friendEntry.child("friendStatus").setValue(2);//TODO: finalize logic here
+                Log.d(TAG,"onClick() with user "+user.getFirstname()+user.getLastname());
+                Toast.makeText(view.getContext(), "test",Toast.LENGTH_LONG);
+
+            }
+        });
+
+
+        mUnfriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG,"mUnfriendButton onClick()");
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage(R.string.unfriend_message)
+                        .setTitle(R.string.unfriend)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dao.deleteFriend(Utils.getUid(),friend[0].getfriendID());
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 }

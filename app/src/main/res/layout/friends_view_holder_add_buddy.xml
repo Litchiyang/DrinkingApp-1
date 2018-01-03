@@ -18,14 +18,22 @@
         android:layout_marginStart="3dp"/>
 
     <TextView
+        android:id="@+id/text_view_friend_name_friends_view_holder"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="25dp"
-        android:layout_toEndOf="@id/image_view_profile_pic_friends_view_holder"
+        android:layout_alignTop="@+id/linearLayout"
+        android:layout_toEndOf="@+id/image_view_profile_pic_friends_view_holder"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:id="@+id/text_view_friend_name_friends_view_holder"/>
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_view_friend_phone_friends_view_holder"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_friend_name_friends_view_holder"
+        android:layout_toEndOf="@+id/image_view_profile_pic_friends_view_holder"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <!--
 
@@ -46,36 +54,18 @@
         android:orientation="vertical"
         android:layout_marginTop="5dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="2dp">
-
-        <mehdi.sakout.fancybuttons.FancyButton
-            android:id="@+id/button_add_friend_view_holder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:layout_gravity="center_horizontal"
-            fancy:fb_borderColor="#FFFFFF"
-            fancy:fb_borderWidth="1dp"
-            fancy:fb_defaultColor="@color/colorPinkOrange"
-            fancy:fb_focusColor="@color/colorPinkOrangeToggle"
-            fancy:fb_radius="30dp"
-            fancy:fb_text="@string/plus_string"
-            fancy:fb_textColor="#FFFFFF" />
-
+        android:layout_marginEnd="0dp"
+        android:id="@+id/linearLayout">
 
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/button_add_buddy_view_holder"
-            android:layout_width="wrap_content"
+            android:layout_width="99dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
             android:paddingTop="10dp"
-            android:layout_marginTop="5dp"
-
             fancy:fb_borderColor="#FFFFFF"
             fancy:fb_borderWidth="1dp"
             fancy:fb_defaultColor="@color/colorPinkOrange"
@@ -85,7 +75,23 @@
             fancy:fb_textColor="#FFFFFF" />
 
 
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/button_unfriend_view_holder"
+            android:layout_width="99dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
 
+            fancy:fb_borderColor="#FFFFFF"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_defaultColor="@color/colorPinkOrange"
+            fancy:fb_focusColor="@color/colorPinkOrangeToggle"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="@string/unfriend"
+            fancy:fb_textColor="#FFFFFF" />
     </LinearLayout>
 
 

@@ -2,6 +2,7 @@ package urmc.drinkingapp.control;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +36,9 @@ public class Utils {
         return BitmapFactory.decodeFile(path, scaledOptions);
     }
 
+    //returns the current users' Uid
+    @NonNull
     public static String getUid() {return FirebaseAuth.getInstance().getCurrentUser().getUid();}
+
 
 }

@@ -28,9 +28,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.Utils;
+import urmc.drinkingapp.model.Friend;
 import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.Profile.ExpandedProfileActivity;
 import urmc.drinkingapp.pages.FriendsViewHolder;
@@ -46,7 +49,7 @@ public class MyFriendsTabFragment extends Fragment {
     //instance of the recylcer view
     private RecyclerView mRecyclerView;
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mUserDatabase;
 
     //private DrinkingAppCollection mCollection;
     private FirebaseRecyclerAdapter mAdapter;
@@ -80,6 +83,7 @@ public class MyFriendsTabFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,17 +92,23 @@ public class MyFriendsTabFragment extends Fragment {
 
         // [START initialize_database_ref]
         dao = new FirebaseDAO();
+        mUserDatabase = dao.getUserDatabase();
+        mFriendReference = dao.getFriendsDatabase();
         // [END initialize_database_ref]
 
         //sets up the recycler view
-        mRecyclerView = (RecyclerView)view.findViewById(R.id.recycler_view_my_friends);
+        mRecyclerView = view.findViewById(R.id.recycler_view_my_friends);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<User>().setIndexedQuery(getFriendsQuery(),mDatabase,User.class).build();
+        Log.d(TAG,"Creating FirebaseRecyclerOptions");
+        //getting the list of friends
+        DatabaseReference keyQuery = mFriendReference.child(getUid());
+        Log.d(TAG,"check keyQuery is null:" + (keyQuery==null));
+        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<User>()
+                .setIndexedQuery(keyQuery,mUserDatabase,User.class).build();
 
         mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
             public FriendsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                Log.d(TAG,"OnlineUpdateUI()-onCreateViewHolder()");
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.friends_view_holder_add_buddy, parent, false);
                 return new FriendsViewHolder(view);
@@ -106,29 +116,11 @@ public class MyFriendsTabFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(FriendsViewHolder holder, int position, User model) {
-                Log.d(TAG,"OnlineUpdateUI()-onBindViewHolder()");
+                holder.bindUser(model);
             }
         };
         mRecyclerView.setAdapter(mAdapter);
-
-//        OnlineUpdateUI();
-//        dao.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.getValue() == null){
-//                    Log.d(TAG,"onDataChange dataSnapshot is null. "+dataSnapshot.toString());
-//                }else{
-//                    OnlineUpdateUI();
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-
+        mAdapter.startListening();
         return view;
     }
 
@@ -137,9 +129,40 @@ public class MyFriendsTabFragment extends Fragment {
     }
 
     public Query getFriendsQuery() {
+        //https://stackoverflow.com/questions/41135658/how-to-perform-join-query-in-firebase
         //Query used to find list
-        Query q = FirebaseDatabase.getInstance().getReference().child("users").limitToLast(5);
-        Log.d(TAG,"QUERY"+q.toString());
+        ArrayList<User> friends;
+        final Query resultQuery;
+        String selfId = getUid();
+        Query q = dao.getUserDatabase();
+        q.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                dao.getFriendsDatabase().child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                for(DataSnapshot userSnapshot : dataSnapshot.getChildren()){
+
+
+
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        Log.d(TAG,"QUERY "+q.toString());
         return q;
     }
 
@@ -153,12 +176,7 @@ public class MyFriendsTabFragment extends Fragment {
         showProgressDialog();
         Log.d(TAG,"OnlineUpdateUI()");
         // TODO: 2017/11/6 clean up this part
-
-        Log.d(TAG,"OnlineUpdateUI()-?");
-        Log.d(TAG,"after creating FirebaseRecyclerOptions");
-
         hideProgressDialog();
-        Log.d(TAG,"line 160");
 
 /*
         mAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(User.class, R.layout.friends_view_holder_add_buddy, FriendsViewHolder.class, getFriendsQuery()) {

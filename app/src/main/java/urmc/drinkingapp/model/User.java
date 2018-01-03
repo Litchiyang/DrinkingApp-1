@@ -58,6 +58,8 @@ public class User {
     }
 
     public String getFirstname() {
+        if(mFirstname==null)
+            return "";
         return mFirstname;
     }
     public void setFirstname(String mFirstname) {
@@ -85,14 +87,15 @@ public class User {
         Lon = lon;
     }
 
-    public String getLastname(){
+    public String getLastname() {
+        if(mLastname==null)
+            return "";
         return mLastname;
     }
 
     public void setLastname(String mLastname) {
         this.mLastname = mLastname;
     }
-
 
 }
 
