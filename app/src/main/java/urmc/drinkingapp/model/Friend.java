@@ -8,9 +8,11 @@ import java.util.UUID;
  */
 
 public class Friend {
-    public static final int PENDING = 0;
-    public static final int FRIEND = 1;
-    public static final int BUDDY = 2;
+
+    public static final int PENDING = 1;    // request sent to friends
+    public static final int RECEIVED = 2;   // request received from friends
+    public static final int FRIEND = 3;     // are friended
+    public static final int BUDDY = 4;      // are buddies
 
     private String friendID;
     private int friendStatus;

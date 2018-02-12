@@ -1,9 +1,13 @@
 package urmc.drinkingapp.pages;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,15 +25,25 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,11 +56,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
+import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.model.Friend;
 import urmc.drinkingapp.model.User;
 
@@ -69,8 +89,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Double mBuddyLon;
     private Boolean haveBuddy = false;
     private String mKey;
+    private Location MyLocation;
 
-    private static final String TAG = "MAPS";
+    private static final String TAG = "MapsActivity";
 
     private User mUser;
     private User mFriend;
@@ -78,50 +99,183 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DatabaseReference mDatabase;
     // [END declare_database_ref]
     private StorageReference mUserStorageRef;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationRequest mLocationRequest;
+    private LocationListener mLocationListener;
+    private LocationManager mLocationManager;
+    private LocationCallback mLocationCallback;
+    GoogleApiClient mGoogleApiClient;
+    Location mCurrentLocation;
+    private static final long INTERVAL = 1000 * 10;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
 
 
-    public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
-    }
-
+    //https://stackoverflow.com/questions/41500765/how-can-i-get-continuous-location-updates-in-android-like-in-google-maps
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(urmc.drinkingapp.R.layout.activity_maps);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            Toast.makeText(this, "Please give permission first!", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Log.d(TAG, "Permission granted");
+        }
+
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                //get the latitude and longitude from the location
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                //get the location name from latitude and longitude
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                try {
+                    List<Address> addresses =
+                            geocoder.getFromLocation(latitude, longitude, 1);
+                    String result = addresses.get(0).getSubLocality() + ":";
+                    result += addresses.get(0).getLocality() + ":";
+                    result += addresses.get(0).getCountryCode();
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(result));
+                    mMap.setMaxZoomPreference(20);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
 
         // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
-        mUserStorageRef = FirebaseStorage.getInstance().getReference().child(getUid());
-
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mUserStorageRef = FirebaseStorage.getInstance().getReference().child(Utils.getUid());
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
 
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        Log.d(TAG, "onMapReady()");
 
-        createMarker();
+
+        mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+//
+//        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(Location location) {
+//                if(location != null){
+//                    Log.d(TAG,"got user location!");
+//                    MyLocation = location;
+//
+//                    CameraPosition cameraPosition = new CameraPosition.Builder()
+//                            .target(new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude()))      // Sets the center of the map to location user
+//                            .zoom(13)                   // Sets the zoom
+//                            .build();                   // Creates a CameraPosition from the builder
+//                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                }
+//            }
+//        });
+
+
+//        mFusedLocationClient.getLastLocation()
+//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//                    @Override
+//                    public void onSuccess(Location location) {
+//                        // Got last known location. In some rare situations this can be null.
+//                        if (location != null) {
+//                            Log.d(TAG, "location collected");
+//                            temp[0] = new LatLng(location.getLatitude(), location.getLongitude());
+//                            mMap.addMarker(new MarkerOptions()
+//                                    .position(temp[0]).title("You are here"));
+//                            CameraPosition cameraPosition = new CameraPosition.Builder()
+//                                    .target(temp[0])      // Sets the center of the map to location user
+//                                    .zoom(13)                   // Sets the zoom
+//                                    .build();                   // Creates a CameraPosition from the builder
+//                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+//                        }
+//                        Log.d(TAG, "location collected FAILED");
+//                    }
+//                });
+
 
     }
 
+
+
+
     private void createMarker() {
-        final String userId = getUid();
+        final String userId = Utils.getUid();
         final FirebaseDAO dao = new FirebaseDAO();
-        dao.getFriendsDatabase().child(userId).addListenerForSingleValueEvent(
+
+
+        // iterate through users
+        dao.getUserDatabase().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         Log.d(TAG, dataSnapshot.toString());
+                        for(DataSnapshot userSnapshot : dataSnapshot.getChildren()){
+                            //iterate through friends
+                            final User user = userSnapshot.getValue(User.class);
+                            dao.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                        Friend friend = ds.getValue(Friend.class);
+                                        // match only when users are buddies
+                                        if(user.getID().equals(friend.getfriendID()) &&
+                                                friend.getFriendStatus() == Friend.BUDDY){
+                                        }
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                        mUser = dataSnapshot.getValue(User.class);
+                                }
+                            });
+                        }
 
                         Iterable<DataSnapshot> mUserChildren = dataSnapshot.getChildren();
 
@@ -174,14 +328,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                                                 }
                                             });
-
-
                                 }
                             }
-
-
                         }
-
                     }
 
                     @Override
@@ -189,9 +338,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                     }
                 });
-
-
     }
+
 
 
 //    public void showProgressDialog() {

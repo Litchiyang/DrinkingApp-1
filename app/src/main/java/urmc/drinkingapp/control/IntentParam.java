@@ -8,6 +8,7 @@ package urmc.drinkingapp.control;
 public class IntentParam {
     public final static String ANALYZE = "ANALYZETEXT";
     public final static String FRAGMENT = "FRAGMENT";
+    public final static String SENDTEXT = "PRESETTEXT";
     public final static String KEY = "KEY";
 
 }

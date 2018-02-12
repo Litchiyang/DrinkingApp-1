@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.READ_SMS" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.location.network" />
 
@@ -83,7 +83,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyChK2bXvNXYM5AL93H9pVXIipFw3uo6FYc" />
+            android:value="AIzaSyANSU8QLDgKKtkSDS8AcUnXJyjB5Ef9ziM" />
 
         <activity
             android:name=".pages.MapsActivity"

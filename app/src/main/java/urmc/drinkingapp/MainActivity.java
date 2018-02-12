@@ -213,12 +213,6 @@ public class MainActivity extends AppCompatActivity {
 //            Toast.makeText(MainActivity.this,
 //                    "This App requires your permission to access your texts and evaluate your drunk texting behavior",
 //                    Toast.LENGTH_LONG).show();
-//            Toast.makeText(MainActivity.this,
-//                    "This App requires your permission to access your texts and evaluate your drunk texting behavior",
-//                    Toast.LENGTH_LONG).show();
-//            Toast.makeText(MainActivity.this,
-//                    "This App requires your permission to access your texts and evaluate your drunk texting behavior",
-//                    Toast.LENGTH_LONG).show();
 //            ActivityCompat.requestPermissions(this,
 //                    new String[]{android.Manifest.permission.READ_SMS},
 //                    READ_SMS_REQUEST_CODE);

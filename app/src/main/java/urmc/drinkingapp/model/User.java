@@ -22,7 +22,7 @@ public class User {
     private String mEmail;
     private String mPhoneNumber;
     private String mProfilePic = "none";
-
+    private boolean isDrunk;
     private Double Lat;
     private Double Lon;
 
@@ -92,11 +92,17 @@ public class User {
             return "";
         return mLastname;
     }
-
     public void setLastname(String mLastname) {
         this.mLastname = mLastname;
     }
 
+    public boolean isDrunk() {
+        return isDrunk;
+    }
+
+    public void setDrunk(boolean drunk) {
+        isDrunk = drunk;
+    }
 }
 
 

@@ -48,21 +48,17 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
     //constructor - wires up all the widgets
     public FriendsViewHolder(View view){
         super(view);
-
         mProfilePic = (ImageView)view.findViewById(R.id.image_view_profile_pic_friends_view_holder);
         mUserName = (TextView)view.findViewById(R.id.text_view_friend_name_friends_view_holder);
         mUnfriendButton = (FancyButton) view.findViewById(R.id.button_unfriend_view_holder);
         mPhoneNumber = view.findViewById(R.id.text_view_friend_phone_friends_view_holder);
         mAddBuddyButton = (FancyButton) view.findViewById(R.id.button_add_buddy_view_holder);
-
         final AppCompatActivity c = (AppCompatActivity)view.getContext();
-
     }
 
     //bind a user to the viewHolder
     public void bindUser(final User user){
         mUser = user;
-
         //set up the picture
         String mPath = user.getProfilePic();
         if (!mPath.matches("none")){
@@ -75,19 +71,28 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
         mPhoneNumber.setText(user.getPhoneNumber());
         final FirebaseDAO dao = new FirebaseDAO();
         final Friend[] friend = new Friend[1]; // nasty hack to access inner class
+        //get all users friends
         final DatabaseReference friendEntry = dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID());
         friendEntry.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Friend f = dataSnapshot.getValue(Friend.class);
-                if(f != null) {
+                String displayText = "";
+                friend[0] = f;
+                if(f == null) {
+                    displayText = "Add friend";
+                    mAddBuddyButton.setText(displayText);
+                    mUnfriendButton.setVisibility(View.INVISIBLE);
+                }
+                else{
                     //process based on friend status
-                    String displayText = "";
                     //TODO: replace these with strings in string.xml
-                    friend[0] = f;
                     switch (friend[0].getFriendStatus()) {
                         case Friend.PENDING:
-                            displayText = "Accept request";
+                            displayText = "Cancel Request";
+                            break;
+                        case Friend.RECEIVED:
+                            displayText = "Accept Request";
                             break;
                         case Friend.FRIEND:
                             displayText = "Buddy Up";
@@ -96,9 +101,12 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                             displayText = "Cancel Buddy";
                             break;
                         default:
-                            displayText = "Buddy up";
                     }
-                    mAddBuddyButton.setText(displayText);
+                        int status = friend[0].getFriendStatus();
+                        if (status == Friend.PENDING || status == Friend.RECEIVED) {
+                            mUnfriendButton.setVisibility(View.INVISIBLE);
+                        }
+                        mAddBuddyButton.setText(displayText);
                 }
             }
             @Override
@@ -107,19 +115,43 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
         mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                friendEntry.child("friendStatus").setValue(2);//TODO: finalize logic here
-                Log.d(TAG,"onClick() with user "+user.getFirstname()+user.getLastname());
-                Toast.makeText(view.getContext(), "test",Toast.LENGTH_LONG);
-
+                if(friend[0]==null ){
+                    //send Friend request
+                    //set status to pending on user side
+                    friendEntry.child("friendID").setValue(user.getID());
+                    friendEntry.child("friendStatus").setValue(Friend.PENDING);
+                    //register request on friends side
+                    dao.getFriendsDatabase().child(user.getID()).child(Utils.getUid()).child("friendID").setValue(Utils.getUid());
+                    dao.getFriendsDatabase().child(user.getID()).child(Utils.getUid()).child("friendStatus").setValue(Friend.RECEIVED);
+                }
+                else{
+                    switch(friend[0].getFriendStatus()) {
+                        case Friend.PENDING:        // cancle friend request
+                            dao.deleteFriend(Utils.getUid(),user.getID());
+                            dao.deleteFriend(user.getID(),Utils.getUid());
+                            break;
+                        case Friend.RECEIVED:       // accept friend request
+                            mUnfriendButton.setVisibility(View.VISIBLE);
+                            friendEntry.child("friendStatus").setValue(Friend.FRIEND);
+                            dao.getFriendsDatabase().child(user.getID()).child("friendStatus").setValue(Friend.FRIEND);
+                            break;
+                        case Friend.FRIEND:         // promote to buddy
+                            friendEntry.child("friendStatus").setValue(Friend.BUDDY);
+                            break;
+                        case Friend.BUDDY:          // demote to friend
+                            friendEntry.child("friendStatus").setValue(Friend.FRIEND);
+                            break;
+                        default:
+                }
+                }
+                Log.d(TAG,"mAddBuddyButton onClick() with user "+user.getID());
             }
         });
-
 
         mUnfriendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG,"mUnfriendButton onClick()");
+                Log.d(TAG,"mUnfriendButton onClick() with user"+user.getID());
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setMessage(R.string.unfriend_message)
                         .setTitle(R.string.unfriend)
@@ -129,12 +161,7 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                                 dao.deleteFriend(Utils.getUid(),friend[0].getfriendID());
                             }
                         })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
+                        .setNegativeButton(R.string.no, null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }

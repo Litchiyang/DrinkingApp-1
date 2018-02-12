@@ -14,6 +14,7 @@ import android.widget.Toast;
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.pages.MapsActivity;
 
 import android.Manifest;
@@ -43,7 +44,6 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
     boolean useText;
     boolean useCall;
 
-
     //disable back button
     @Override
     public void onBackPressed() {
@@ -56,9 +56,13 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_drunk_mode_default);
         Toast.makeText(DrunkModeDefaultActivity.this, "DOES THIS SHOW UP?" , Toast.LENGTH_LONG);
 
+        cabButton = (FancyButton) findViewById(R.id.button_cab_default_drunk_mode);
+        textButton = (FancyButton) findViewById(R.id.button_text_default_drunk_mode);
+        emergencyButton = (FancyButton) findViewById(R.id.button_emergency_default_drunk_mode);
+
         //Get intents if anything is preset
         phoneNo = getIntent().getStringExtra("PRESETPHONENUMBER");
-        message = getIntent().getStringExtra("PRESETTEXT");
+        message = getIntent().getStringExtra(IntentParam.SENDTEXT);
         call = getIntent().getStringExtra("PRESETCALL");
 
         buddyLocation = getIntent().getBooleanExtra("BUDDYCHECKED", true);
@@ -75,7 +79,6 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
         });
 
 
-        textButton = (FancyButton) findViewById(R.id.button_text_default_drunk_mode);
 
         if(useText) {
             //Send text message when button is pressed
@@ -90,12 +93,7 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
         }
 
 
-
-
-        cabButton = (FancyButton) findViewById(R.id.button_cab_default_drunk_mode);
-
         if(useCall) {
-
             //if no information is preset ask user to set it
             //check for permission to call --> if there is no permission then ask user for permission
             cabButton.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +136,6 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
 
                */
 
-
                 }
 
             });
@@ -164,8 +161,14 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
             mLocation.setVisibility(View.GONE);
         }
 
-
-
+        emergencyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri number = Uri.parse("tel:911");
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                startActivity(callIntent);
+            }
+        });
     }
 
 

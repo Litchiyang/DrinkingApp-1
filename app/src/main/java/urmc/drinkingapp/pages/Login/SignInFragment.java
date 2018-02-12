@@ -160,13 +160,11 @@ public class SignInFragment extends Fragment {
                     Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
                             Toast.LENGTH_SHORT).show();
                 }
-
                 //check for valid user and start the profile activity
                 else{
                     mLoginEmail = mEmailEditText.getText().toString();
                     mLoginPassword = mPasswordEditText.getText().toString();
                     showProgressDialog();
-
                     //Try to authenticate the user's credentials
                     mAuth.signInWithEmailAndPassword(mLoginEmail, mLoginPassword)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

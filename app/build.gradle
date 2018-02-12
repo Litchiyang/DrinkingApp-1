@@ -28,7 +28,6 @@ dependencies {
     //Glide set up
     compile 'com.github.bumptech.glide:glide:4.3.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
-
     //firebase
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
@@ -46,6 +45,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-storage:3.1.0'
     compile 'com.firebaseui:firebase-ui-database:3.1.0'
 
+    compile "com.google.android.gms:play-services-location:11.4.2"
     //graph
     compile 'com.jjoe64:graphview:4.2.1'
     testCompile 'junit:junit:4.12'
