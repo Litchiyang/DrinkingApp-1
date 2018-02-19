@@ -37,6 +37,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -59,6 +60,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import mehdi.sakout.fancybuttons.FancyButton;
@@ -79,35 +81,15 @@ import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    int MY_LOCATION_REQUEST_CODE = 7;
-
-
-    // private User mUser;
-    private Friend mBuddy;
-    private Marker marker;
-    private Double mBuddyLat;
-    private Double mBuddyLon;
-    private Boolean haveBuddy = false;
-    private String mKey;
     private Location MyLocation;
-
     private static final String TAG = "MapsActivity";
-
-    private User mUser;
-    private User mFriend;
-    // [START declare_database_ref]
-    private DatabaseReference mDatabase;
-    // [END declare_database_ref]
-    private StorageReference mUserStorageRef;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest mLocationRequest;
     private LocationListener mLocationListener;
     private LocationManager mLocationManager;
-    private LocationCallback mLocationCallback;
-    GoogleApiClient mGoogleApiClient;
-    Location mCurrentLocation;
-    private static final long INTERVAL = 1000 * 10;
-    private static final long FASTEST_INTERVAL = 1000 * 5;
+    private Marker mMarker;
+    private FirebaseDAO mFirebaseDAO;
+    private HashMap<String,Marker> mFriendsList;
 
 
     //https://stackoverflow.com/questions/41500765/how-can-i-get-continuous-location-updates-in-android-like-in-google-maps
@@ -133,14 +115,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, "Permission granted");
         }
 
+        mFirebaseDAO = new FirebaseDAO();
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         mLocationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 //get the latitude and longitude from the location
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
+
+                //update location to firebase
+                mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lat").setValue(latitude);
+                mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lon").setValue(longitude);
+
+
                 //get the location name from latitude and longitude
                 Geocoder geocoder = new Geocoder(getApplicationContext());
                 try {
@@ -148,9 +138,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             geocoder.getFromLocation(latitude, longitude, 1);
                     String result = addresses.get(0).getSubLocality() + ":";
                     result += addresses.get(0).getLocality() + ":";
-                    result += addresses.get(0).getCountryCode();
+            result += addresses.get(0).getCountryCode();
                     LatLng latLng = new LatLng(latitude, longitude);
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(result));
+                    mMarker.setPosition(latLng);
                     mMap.setMaxZoomPreference(20);
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 } catch (IOException e) {
@@ -174,10 +164,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
 
-        // [START initialize_database_ref]
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
-        mUserStorageRef = FirebaseStorage.getInstance().getReference().child(Utils.getUid());
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
 
     }
@@ -186,7 +172,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "onMapReady()");
-
 
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -199,67 +184,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            MyLocation = location;
+                            //get the latitude and longitude from the location
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lat").setValue(latitude);
+                            mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lon").setValue(longitude);
+
+                            // Logic to handle location object
+                            LatLng latLng = new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude());
+                            mMarker = mMap.addMarker(new MarkerOptions()
+                                            .position(latLng)
+                                            .title("You are here")
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(latLng)      // Sets the center of the map to location user
+                            .zoom(10)                   // Sets the zoom
+                            .build();                   // Creates a CameraPosition from the builder
+                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        }
+                    }
+                });
         mMap.setMyLocationEnabled(true);
-//
-//        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//            @Override
-//            public void onSuccess(Location location) {
-//                if(location != null){
-//                    Log.d(TAG,"got user location!");
-//                    MyLocation = location;
-//
-//                    CameraPosition cameraPosition = new CameraPosition.Builder()
-//                            .target(new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude()))      // Sets the center of the map to location user
-//                            .zoom(13)                   // Sets the zoom
-//                            .build();                   // Creates a CameraPosition from the builder
-//                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//                }
-//            }
-//        });
 
-
-//        mFusedLocationClient.getLastLocation()
-//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        // Got last known location. In some rare situations this can be null.
-//                        if (location != null) {
-//                            Log.d(TAG, "location collected");
-//                            temp[0] = new LatLng(location.getLatitude(), location.getLongitude());
-//                            mMap.addMarker(new MarkerOptions()
-//                                    .position(temp[0]).title("You are here"));
-//                            CameraPosition cameraPosition = new CameraPosition.Builder()
-//                                    .target(temp[0])      // Sets the center of the map to location user
-//                                    .zoom(13)                   // Sets the zoom
-//                                    .build();                   // Creates a CameraPosition from the builder
-//                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-//                        }
-//                        Log.d(TAG, "location collected FAILED");
-//                    }
-//                });
-
-
+        //add marker for friends
+        createMarker();
     }
-
-
-
 
     private void createMarker() {
         final String userId = Utils.getUid();
-        final FirebaseDAO dao = new FirebaseDAO();
-
+        mFriendsList = new HashMap<>();
 
         // iterate through users
-        dao.getUserDatabase().addValueEventListener(
+        mFirebaseDAO.getUserDatabase().addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         Log.d(TAG, dataSnapshot.toString());
+                        //list of users
                         for(DataSnapshot userSnapshot : dataSnapshot.getChildren()){
                             //iterate through friends
                             final User user = userSnapshot.getValue(User.class);
-                            dao.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            mFirebaseDAO.getFriendsDatabase().child(Utils.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     for(DataSnapshot ds : dataSnapshot.getChildren()){
@@ -267,6 +240,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         // match only when users are buddies
                                         if(user.getID().equals(friend.getfriendID()) &&
                                                 friend.getFriendStatus() == Friend.BUDDY){
+                                            if(mFriendsList.containsKey(user.getID())){
+                                                LatLng location = new LatLng(user.getLat(), user.getLon());
+                                                Marker temp =   mFriendsList.get(user.getID());
+                                                if(user.isDrunk()){
+                                                    temp.setPosition(location);
+                                                    temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                                }
+                                                else{
+                                                    temp.setPosition(location);
+                                                    temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                                }
+                                            }
+                                            // new entry
+                                            else{
+                                                if(user.getLat() != null && user.getLon() != null) {
+                                                    LatLng location = new LatLng(user.getLat(), user.getLon());
+
+                                                    Marker temp = mMap.addMarker(new MarkerOptions()
+                                                            .position(location)
+                                                            .title(user.getFirstname() + " " + user.getLastname()));
+
+                                                    if(user.isDrunk()){
+                                                        temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                                    }
+                                                    else{
+                                                        temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                                    }
+
+
+                                                    mFriendsList.put(user.getID(), temp);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -279,58 +284,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         Iterable<DataSnapshot> mUserChildren = dataSnapshot.getChildren();
 
-                        // [START_EXCLUDE]
-                        if (mUser == null) {
-                            // User is null, error out
-                            Log.e(TAG, "User " + userId + " is unexpectedly null");
-                            Toast.makeText(getApplicationContext(),
-                                    "Error: could not fetch user.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d(TAG, "UserID is " + userId );
-                            for (DataSnapshot buddy : mUserChildren) {
-
-                                Log.d(TAG, "BUDDY key: " + buddy.getKey() + " value: " + buddy.getValue());
-
-                                if (Integer.valueOf(buddy.getValue().toString()) == 1) {
-
-                                    dao.getUserDatabase().child(buddy.getKey().toString()).addListenerForSingleValueEvent(
-                                            new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot snapshot) {
-                                                    // Get user value
-                                                    Log.d(TAG, snapshot.toString());
-
-                                                    mFriend = snapshot.getValue(User.class);
-
-                                                    // [START_EXCLUDE]
-                                                    if (mFriend == null) {
-                                                        // User is null, error out
-                                                        Log.e(TAG, "User " + mFriend + " is unexpectedly null");
-                                                        Toast.makeText(getApplicationContext(),
-                                                                "Error: could not fetch user.",
-                                                                Toast.LENGTH_SHORT).show();
-
-                                                    } else {
-                                                        Log.d(TAG, "UserID is " + mFriend.getFirstname());
-                                                        Log.d(TAG, "long " + mFriend.getLon() + " " + mFriend.getLat());
-                                                        LatLng friendLocation = new LatLng(mFriend.getLat(), mFriend.getLon());
-                                                        mMap.addMarker(new MarkerOptions().position(friendLocation));
-                                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(friendLocation));
-
-
-                                                    }
-
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-                                                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                                                }
-                                            });
-                                }
-                            }
-                        }
                     }
 
                     @Override
@@ -339,126 +292,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
     }
-
-
-
-//    public void showProgressDialog() {
-//        if (mProgressDialog == null) {
-//            mProgressDialog = new ProgressDialog(getActivity());
-//            mProgressDialog.setCancelable(false);
-//            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//            mProgressDialog.setMessage("Loading...");
-//        }
-//
-//        mProgressDialog.show();
-//    }
-//
-//    public void hideProgressDialog() {
-//        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-//            mProgressDialog.dismiss();
-//        }
-//    }
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        mAuth.removeAuthStateListener(mAuthListener);
-//    }
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // Inflate the layout for this fragment
-//        View view = inflater.inflate(R.layout.fragment_online_sign_in, container, false);
-//
-//        mAuth = FirebaseAuth.getInstance();
-//
-//        mAuthListener = new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser user = firebaseAuth.getCurrentUser();
-//                if (user != null) {
-//                    // User is signed in
-//                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-//                } else {
-//                    // User is signed out
-//                    Log.d(TAG, "onAuthStateChanged:signed_out");
-//                }
-//                // ...
-//            }
-//        };
-//
-//        // Configure Google Sign In
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build();
-//
-//        //getting persisted state
-//        if (savedInstanceState!=null){
-//            mEmailEditText.setText(savedInstanceState.getString("EMAIL"));
-//            mPasswordEditText.setText(savedInstanceState.getString("PASSWORD"));
-//        }
-//
-//        //onClick listener for the signIn button - checks for valid login information
-//        //mSignInButton = (Button)view.findViewById(R.id.button_sign_in);
-//        mSignInButton = (FancyButton)view.findViewById(R.id.button_sign_in);
-//        mSignInButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!isValidEmail(mEmailEditText.getText())){
-//                    Toast.makeText(getActivity(), "Enter a valid email",Toast.LENGTH_SHORT).show();
-//                }
-//                else if(!isValidPassword(mPasswordEditText.getText())){
-//                    Toast.makeText(getActivity(), "Enter a valid password - more than 6 characters",
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//
-//                //check for valid user and start the profile activity
-//                else{
-//                    mLoginEmail = mEmailEditText.getText().toString();
-//                    mLoginPassword = mPasswordEditText.getText().toString();
-//                    showProgressDialog();
-//
-//                    //Try to authenticate the user's credentials
-//                    mAuth.signInWithEmailAndPassword(mLoginEmail, mLoginPassword)
-//                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<AuthResult> task) {
-//                                    Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-//                                    hideProgressDialog();
-//                                    // If sign in fails, display a message to the user. If sign in succeeds
-//                                    // the auth state listener will be notified and logic to handle the
-//                                    // signed in user can be handled in the listener.
-//                                    if (!task.isSuccessful()) {
-//                                        Log.w(TAG, "signInWithEmail", task.getException());
-//                                        Toast.makeText(getActivity().getBaseContext(), "Authentication failed.",
-//                                                Toast.LENGTH_SHORT).show();
-//                                    }
-//
-//                                    else{
-//                                        Intent intent = new Intent(getActivity(), MainActivity.class);
-//                                        //hardcode bs here
-//                                        intent.putExtra(IntentParam.ANALYZE,1);
-//                                        startActivity(intent);
-//                                    }
-//                                }
-//                            });
-//
-//                }
-//            }
-//        });
-//
-//
-//        return view;
-//    }
-
-
 
 }

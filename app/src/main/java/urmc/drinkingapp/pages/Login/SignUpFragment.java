@@ -209,6 +209,7 @@ public class SignUpFragment extends Fragment {
         u.setID(user.getUid());
         u.setLat(Math.random()*180-90);
         u.setLon(Math.random()*360-180);
+        u.setDrunk(false);
         //creates a new user in database
         FirebaseDAO dao = new FirebaseDAO();
         dao.setUser(u);

@@ -130,9 +130,7 @@ public class SignInFragment extends Fragment {
         mFacebookSignIn = (FancyButton)view.findViewById(R.id.button_facebook_online_sign_in);
         mGoogleSignIn = (FancyButton)view.findViewById(R.id.button_gplus_online_sign_in);
 
-        //debug only
-        mEmailEditText.setText("a@a.com");
-        mPasswordEditText.setText("aaaaaa");
+
 
 
         // Configure Google Sign In
@@ -193,7 +191,12 @@ public class SignInFragment extends Fragment {
                 }
             }
         });
+
+        //debug only
+        mEmailEditText.setText("a@a.com");
+        mPasswordEditText.setText("aaaaaa");
         mSignInButton.callOnClick();
+
         //listener for the signUp button - starts the signUp Fragment
         //mSignUpButton = (Button)view.findViewById(R.id.button_sign_up);
         mSignUpButton = (FancyButton) view.findViewById(R.id.button_sign_up);
