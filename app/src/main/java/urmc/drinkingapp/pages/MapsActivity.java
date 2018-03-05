@@ -174,7 +174,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "onMapReady()");
 
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -182,6 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            Toast.makeText(this,"User permission required",Toast.LENGTH_LONG).show();
             return;
         }
         mFusedLocationClient.getLastLocation()
@@ -196,7 +198,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             double longitude = location.getLongitude();
                             mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lat").setValue(latitude);
                             mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lon").setValue(longitude);
-
                             // Logic to handle location object
                             LatLng latLng = new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude());
                             mMarker = mMap.addMarker(new MarkerOptions()
@@ -212,15 +213,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
         mMap.setMyLocationEnabled(true);
-
         //add marker for friends
         createMarker();
     }
 
     private void createMarker() {
-        final String userId = Utils.getUid();
         mFriendsList = new HashMap<>();
-
         // iterate through users
         mFirebaseDAO.getUserDatabase().addValueEventListener(
                 new ValueEventListener() {
@@ -242,6 +240,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 friend.getFriendStatus() == Friend.BUDDY){
                                             if(mFriendsList.containsKey(user.getID())){
                                                 LatLng location = new LatLng(user.getLat(), user.getLon());
+                                                // get buddys current location
                                                 Marker temp =   mFriendsList.get(user.getID());
                                                 if(user.isDrunk()){
                                                     temp.setPosition(location);
@@ -252,23 +251,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                                 }
                                             }
-                                            // new entry
+                                            // new entry, mark the buddys location on the map
                                             else{
                                                 if(user.getLat() != null && user.getLon() != null) {
                                                     LatLng location = new LatLng(user.getLat(), user.getLon());
-
                                                     Marker temp = mMap.addMarker(new MarkerOptions()
                                                             .position(location)
                                                             .title(user.getFirstname() + " " + user.getLastname()));
-
                                                     if(user.isDrunk()){
                                                         temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                                     }
                                                     else{
                                                         temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                                     }
-
-
                                                     mFriendsList.put(user.getID(), temp);
                                                 }
                                             }
@@ -277,15 +272,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-
                                 }
                             });
                         }
-
-                        Iterable<DataSnapshot> mUserChildren = dataSnapshot.getChildren();
-
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
