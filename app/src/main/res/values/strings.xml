@@ -61,6 +61,7 @@
     <string name="unfriend_message">Are you sure to unfriend?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="main_map">Map</string>
 
 
 </resources>

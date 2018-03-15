@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private FancyButton mFriends;
     private FancyButton mSettings;
     private FancyButton mText;
+    private FancyButton mMap;
     private SlideView mDrunkMode;
     int READ_SMS_REQUEST_CODE = 77;
     private static final String TAG = "MainActivity";
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDAO dao;
 
 
-
+    //http://devdeeds.com/android-location-tracking-in-background-service/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,21 +92,24 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         dao = new FirebaseDAO();
+
+
+        //TODO remove test code
         Friend friend = new Friend();
         friend.setfriendID("VNaOwu9sAVPdtQP6CACAxCU3eK93");
         friend.setFriendStatus(3);
         dao.setFriend(Utils.getUid(), friend);
+
+
         Query q = dao.getFriendsDatabase().child(Utils.getUid());
         q.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-//                    Log.d(TAG,"DS IS THIS:"+ds.toString());
                     Friend f = ds.getValue(Friend.class);
                     Log.d(TAG,"GETTING USER");
                     Log.d(TAG,"uid is" + f.getfriendID());
                 }
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -169,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         mProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, MapsActivity.class);
+                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(i);
             }
         });
@@ -197,9 +201,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mMap = (FancyButton) findViewById(R.id.button_maps_main_activity);
+        mMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(i);
+            }
+        });
+
         Log.d(TAG,"data access created");
-
-
 
 //        //If permission to read text messages has been granted then proceed to do so and analyze the drunk texting behavior
 //        //otherwise show rationale and request permission
@@ -286,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //using drunk text analysis to determine whether a given text is considered drunk texting or not
                 //depending on the results add the date to the drunkDays hashMap and increase the counter for that day
+                Log.d(TAG,"Drunk test:"+cursor.getString(12));
                 if (isDrunk(cursor.getString(12),params,BOW)) {
                     if (drunkDays.containsKey(messageDate)) {
                         Log.e("ADDING DATE", messageDate.toString());
