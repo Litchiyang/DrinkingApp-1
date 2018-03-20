@@ -38,12 +38,10 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
-import ng.max.slideview.Util;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.model.Friend;
-import urmc.drinkingapp.model.User;
 import urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity;
 import urmc.drinkingapp.pages.Friends.FriendsViewPagerActivity;
 import urmc.drinkingapp.pages.GoingOutSettings.GoingOutSettingsActivity;
@@ -95,10 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         //TODO remove test code
-        Friend friend = new Friend();
-        friend.setfriendID("VNaOwu9sAVPdtQP6CACAxCU3eK93");
-        friend.setFriendStatus(3);
-        dao.setFriend(Utils.getUid(), friend);
+//        Friend friend = new Friend();
+//        friend.setfriendID("VNaOwu9sAVPdtQP6CACAxCU3eK93");
+//        friend.setFriendStatus(3);
+//        dao.setFriend(Utils.getUid(), friend);
 
 
         Query q = dao.getFriendsDatabase().child(Utils.getUid());
@@ -248,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
         ((SlideView) findViewById(R.id.switch_main_activity)).setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
             @Override
             public void onSlideComplete(SlideView slideView) {
+                dao.getUserDatabase().child(Utils.getUid()).child("drunk").setValue(true);
                 Intent i = new Intent(MainActivity.this, DrunkModeDefaultActivity.class);
                 startActivity(i);
             }
@@ -285,9 +284,9 @@ public class MainActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
                 Date messageDate = millisToDate(Long.parseLong(cursor.getString(4)));
-                Log.e("DATE-TO-STRING", getSimpleDate(messageDate));
-                Log.e("STRING-TO-DATE", stringToDate(getSimpleDate(messageDate)).toString());
-                messageDate = stringToDate(getSimpleDate(messageDate));
+                Log.e("DATE-TO-STRING", dateToString(messageDate));
+                Log.e("STRING-TO-DATE", stringToDate(dateToString(messageDate)).toString());
+                messageDate = stringToDate(dateToString(messageDate));
                 if (finalDate == null){
                     finalDate = messageDate;
                 }
@@ -299,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
                 //depending on the results add the date to the drunkDays hashMap and increase the counter for that day
                 Log.d(TAG,"Drunk test:"+cursor.getString(12));
                 if (isDrunk(cursor.getString(12),params,BOW)) {
+                    dao.getUserDatabase().child(Utils.getUid()).child("isDrunk").setValue(true);
                     if (drunkDays.containsKey(messageDate)) {
                         Log.e("ADDING DATE", messageDate.toString());
                         drunkDays.put(messageDate, drunkDays.get(messageDate) + 1);
@@ -451,7 +451,6 @@ public class MainActivity extends AppCompatActivity {
 
             */
 
-
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
             series.setTitle("Drunk Texts");
             series.setDrawDataPoints(true);
@@ -469,14 +468,9 @@ public class MainActivity extends AppCompatActivity {
 
             mGraph.getViewport().setScalable(true);
             mGraph.getViewport().setScrollable(true);
-
-
             //mGraph.getViewport().setMaxY(5);
             mGraph.getViewport().setMinY(0);
             mGraph.getViewport().setYAxisBoundsManual(true);
-
-
-
             mGraph.getGridLabelRenderer().setNumVerticalLabels(3);
             mGraph.getGridLabelRenderer().setGridColor(Color.WHITE);
             mGraph.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
@@ -487,8 +481,6 @@ public class MainActivity extends AppCompatActivity {
             mGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
             mGraph.getLegendRenderer().setBackgroundColor(16777215);
             mGraph.getLegendRenderer().setTextColor(Color.WHITE);
-
-
             // as we use dates as labels, the human rounding to nice readable numbers is not necessary
             mGraph.getGridLabelRenderer().setHumanRounding(false);
         }
@@ -535,8 +527,6 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             Log.e("FILEREADER","Exception Params");
         }
-
-
         return params;
     }
 
@@ -548,7 +538,7 @@ public class MainActivity extends AppCompatActivity {
             try (BufferedReader br = new BufferedReader(is)) {
                 String line;
                 while ((line = br.readLine()) != null) {
-                    Log.e("READFILE BOW",line);
+                    Log.e(TAG,"READFILE BOW"+line);
                     BOW.add(line);
                 }
             }
@@ -596,12 +586,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e("DRUNKTEST","false no threshold");
             return false;
         }
-
     }
 
     //convert the millisecond format from the SMS attributes to a date
     public Date millisToDate(long currentTime) {
-        String finalDate;
+//        String finalDate;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(currentTime);
         //Date date = calendar.getTime();
@@ -610,20 +599,15 @@ public class MainActivity extends AppCompatActivity {
 
     //Get a string of a simple date from a regular long date Wed Oct 16 00:00:00 CEST 2013
     //Conversion back and forth being made so we can get rid of the seconds and milliseconds and compare dates by day
-    public String getSimpleDate(Date date){
+    public String dateToString(Date date){
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
         String dateInString = "Wed Oct 16 00:00:00 CEST 2013";
         try {
             SimpleDateFormat parse = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
             Date datef = parse.parse(date.toString());
-
-            //System.out.println(date);
-            Log.e("FORMATTEDDATE",datef.toString());
-            //System.out.println(formatter.format(date));
-            Log.e("FORMATTEDDATE",formatter.format(datef));
-
+//            Log.e("FORMATTEDDATE",datef.toString());
+//            Log.e("FORMATTEDDATE",formatter.format(datef));
             String date_to_format = formatter.format(datef);
-
             return formatter.format(datef);
 
         } catch (ParseException e) {
@@ -639,16 +623,13 @@ public class MainActivity extends AppCompatActivity {
         SimpleDateFormat parse2 = new SimpleDateFormat("MM-dd-yyyy",Locale.ENGLISH);
         try{
             Date format_date = parse2.parse(sdate);
-            Log.e("FINALFORMAT",format_date.toString());
+//            Log.e("FINALFORMAT",format_date.toString());
             return format_date;
         } catch (ParseException e){
             e.printStackTrace();
         }
         return null;
-
         //Date final_date = formatter.parse(datef.toString());
-
-
         //Date format_date = new SimpleDateFormat("MM-dd").parse(formatter.format(datef));
     }
 }

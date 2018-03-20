@@ -3,7 +3,10 @@ package urmc.drinkingapp.pages.Profile;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,7 +35,10 @@ import java.security.MessageDigest;
 import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
+import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.model.User;
+import urmc.drinkingapp.pages.Login.InitialActitivity;
+import urmc.drinkingapp.pages.Login.SignInFragment;
 
 
 /**
@@ -55,6 +61,7 @@ public class OnlineProfileFragment extends Fragment {
     private TextView mEmailTextView;
     //private Button mEditProfileButton;
     private FancyButton mEditProfileButton;
+    private FancyButton mLogOutButton;
     private static final String TAG = "OnlineProfileFragment";
 
     private User mUser;
@@ -164,6 +171,21 @@ public class OnlineProfileFragment extends Fragment {
                 mListener.EditProfileStarted();
             }
         });
+        mLogOutButton = view.findViewById(R.id.button_log_out);
+        mLogOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor Ed=sp.edit();
+                Ed.remove(IntentParam.KEY_USERNAME);
+                Ed.remove(IntentParam.KEY_PASSWORD);
+                Ed.commit();
+                Intent intent = new Intent(getActivity(), InitialActitivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
 
 
 
@@ -219,14 +241,11 @@ public class OnlineProfileFragment extends Fragment {
                 });
     }
 
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mListener = (OnlineProfileFragment.EditProfileProcess)context;
     }
-
 
     private void loadPic(){
         RequestOptions ro = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true);

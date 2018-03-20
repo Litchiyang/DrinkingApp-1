@@ -62,6 +62,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="main_map">Map</string>
+    <string name="log_out">Log Out</string>
+    <string name="phonenumber_hint">phone number</string>
 
 
 </resources>

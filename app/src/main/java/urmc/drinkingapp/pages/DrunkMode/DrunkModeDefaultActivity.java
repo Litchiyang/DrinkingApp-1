@@ -14,7 +14,9 @@ import android.widget.Toast;
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
 import urmc.drinkingapp.R;
+import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
+import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.pages.MapsActivity;
 
 import android.Manifest;
@@ -74,10 +76,11 @@ public class DrunkModeDefaultActivity extends AppCompatActivity {
         ((SlideView) findViewById(R.id.switch_drunk_mode_default_activity)).setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
             @Override
             public void onSlideComplete(SlideView slideView) {
+                FirebaseDAO firebaseDAO = new FirebaseDAO();
+                firebaseDAO.getUserDatabase().child(Utils.getUid()).child("drunk").setValue(false);
                 finish();
             }
         });
-
 
 
         if(useText) {

@@ -4,7 +4,9 @@ package urmc.drinkingapp.pages.Login;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -26,7 +28,6 @@ import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.model.User;
-
 import static urmc.drinkingapp.control.LoginAuthentication.isValidEmail;
 import static urmc.drinkingapp.control.LoginAuthentication.isValidPassword;
 
@@ -39,6 +40,9 @@ public class SignInFragment extends Fragment {
     public interface SignUpProcess{
         void SignUpStarted();
     }
+
+    static final String KEY_USERNAME = "username";
+    static final String KEY_PASSWORD = "password";
 
     private SignUpProcess mListener;
 
@@ -163,6 +167,13 @@ public class SignInFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                                     hideProgressDialog();
+
+                                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+                                    SharedPreferences.Editor Ed=sp.edit();
+                                    Ed.putString(IntentParam.KEY_USERNAME,mLoginEmail );
+                                    Ed.putString(IntentParam.KEY_PASSWORD,mLoginPassword);
+                                    Ed.apply();
+
                                     // If sign in fails, display a message to the user. If sign in succeeds
                                     // the auth state listener will be notified and logic to handle the
                                     // signed in user can be handled in the listener.
@@ -187,9 +198,21 @@ public class SignInFragment extends Fragment {
 
         //debug only
         //TODO remove sample
-        mEmailEditText.setText("a@a.com");
-        mPasswordEditText.setText("aaaaaa");
-        mSignInButton.callOnClick();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String username = prefs.getString(IntentParam.KEY_USERNAME, "");
+        String password = prefs.getString(IntentParam.KEY_PASSWORD, "");
+
+        //very insecure way of doing auto sign in, but seems to be the only way right now
+        Log.d(TAG,"checking saved prefs");
+        if (!username.isEmpty() && !password.isEmpty()){
+            mEmailEditText.setText(username);
+            mPasswordEditText.setText(password);
+            mSignInButton.callOnClick();
+        }
+
+
+
 
         //listener for the signUp button - starts the signUp Fragment
         mSignUpButton = (FancyButton) view.findViewById(R.id.button_sign_up);

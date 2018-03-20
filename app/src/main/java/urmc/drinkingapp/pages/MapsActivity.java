@@ -122,10 +122,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                    result += addresses.get(0).getLocality() + ":";
 //                    result += addresses.get(0).getCountryCode();
                     LatLng latLng = new LatLng(latitude, longitude);
-                    mMarker.setPosition(latLng);
-                    mMap.setMaxZoomPreference(20);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                        mMarker.setPosition(latLng);
+                        mMap.setMaxZoomPreference(20);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e){
+                    Log.e(TAG,"Init issues");
                     e.printStackTrace();
                 }
             }
@@ -145,7 +150,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         };
-
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
 
     }

@@ -19,23 +19,23 @@
         android:weightSum="1"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_view_app_name"
-            android:layout_width="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_weight="0.1"
-            android:layout_marginBottom="10dp"
-            android:text="BOTCUS"
-            android:textSize="45sp"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/text_view_app_name"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_weight="0.1"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:text="BOTCUS"-->
+            <!--android:textSize="45sp"-->
+            <!--android:textStyle="bold" />-->
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/main_activity_graph"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.3"
+            android:layout_weight="0.4"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="15dp" />
 
@@ -54,7 +54,7 @@
             fancy:fb_borderWidth="1dp"
             fancy:fb_defaultColor="@color/colorPinkOrange"
             fancy:fb_focusColor="@color/colorPinkOrangeToggle"
-            fancy:fb_radius="30dp"
+            fancy:fb_radius="100dp"
             fancy:fb_text="Analyze text"
             fancy:fb_textColor="#FFFFFF"
             android:layout_marginTop="10dp"
@@ -95,7 +95,7 @@
             fancy:fb_borderWidth="1dp"
             fancy:fb_defaultColor="@color/colorPinkOrange"
             fancy:fb_focusColor="@color/colorPinkOrangeToggle"
-            fancy:fb_radius="30dp"
+            fancy:fb_radius="100dp"
             fancy:fb_text="@string/friends_string"
             fancy:fb_textColor="#FFFFFF" />
 
@@ -114,7 +114,7 @@
             fancy:fb_borderWidth="1dp"
             fancy:fb_defaultColor="@color/colorPinkOrange"
             fancy:fb_focusColor="@color/colorPinkOrangeToggle"
-            fancy:fb_radius="30dp"
+            fancy:fb_radius="100dp"
             fancy:fb_text="Going out settings"
             fancy:fb_textColor="#FFFFFF" />
 
@@ -126,7 +126,6 @@
             android:layout_marginBottom="10dp"
             android:paddingBottom="10dp"
             android:paddingLeft="30dp"
-
             android:paddingRight="30dp"
             android:paddingTop="10dp"
             fancy:fb_borderColor="#FFFFFF"

@@ -58,6 +58,7 @@ public class OnlineEditProfileFragment extends Fragment {
     private ImageView mProfilePicImageView;
     private EditText mFirstnameEditText;
     private EditText mLastnameEditText;
+    private EditText mPhonenumberEditText;
     private FancyButton mOkButton;
     private FancyButton mChangePicButton;
     private TextView mEmailTextView;
@@ -89,12 +90,18 @@ public class OnlineEditProfileFragment extends Fragment {
 
         //wiring up the widgets
         mProfilePicImageView = (ImageView)view.findViewById(R.id.image_view_profile_pic_edit_profile);
+
         mFirstnameEditText = (EditText)view.findViewById(R.id.edit_text_firstname_profile);
         mLastnameEditText =  (EditText)view.findViewById(R.id.edit_text_lastname_profile);
+        mPhonenumberEditText = (EditText)view.findViewById(R.id.edit_text_phone_number);
+
         mEmailTextView = (TextView) view.findViewById(R.id.edit_text_email_profile);
+
+        mChangePicButton = (FancyButton) view.findViewById(R.id.button_change_profile_pic);
+        mOkButton = (FancyButton) view.findViewById(R.id.button_ok_edit_profile);
+
         FirebaseDAO dao = new FirebaseDAO();
 
-        // [START single_value_read]
         final String userId = Utils.getUid();
         dao.getUserDatabase().child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -102,7 +109,6 @@ public class OnlineEditProfileFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         mUser = dataSnapshot.getValue(User.class);
-
                         if (mUser == null) {
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
@@ -112,14 +118,13 @@ public class OnlineEditProfileFragment extends Fragment {
                             mUser = new User(Utils.getUid());
                         } else {
                             Log.d(TAG, "Editing User " + userId +":"+dataSnapshot.toString());
-
                             //setting appropriate information in the widgets according to the user's attributes
                             mFirstnameEditText.setText(mUser.getFirstname());
                             mLastnameEditText.setText(mUser.getLastname());
+                            mPhonenumberEditText.setText(mUser.getPhoneNumber());
                             mEmailTextView.setText(mUser.getEmail());
                             //setting profile picture
                             String mPath = mUser.getProfilePic();
-
                             if (!mPath.matches("none")){
                                 // Load the image using Glide
                                 loadPic();
@@ -145,26 +150,25 @@ public class OnlineEditProfileFragment extends Fragment {
 
         //ok button to save changes
         //mOkButton = (Button)view.findViewById(R.id.button_ok_edit_profile);
-        mOkButton = (FancyButton) view.findViewById(R.id.button_ok_edit_profile);
+
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseDAO dao = new FirebaseDAO();
                 mUser.setFirstname(mFirstnameEditText.getText().toString());
                 mUser.setLastname(mLastnameEditText.getText().toString());
+                mUser.setPhoneNumber(mPhonenumberEditText.getText().toString());
                 dao.updateUser(mUser);
-
                 mListener.EditProfileOK();
                 if(!mUser.getProfilePic().equals("none")){uploadPic();}
                 /*
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();*/
-
             }
         });
 
         //onClickListener to change picture - triggers the photoActivity capable of taking pictures
-        mChangePicButton = (FancyButton) view.findViewById(R.id.button_change_profile_pic);
+
         mChangePicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
