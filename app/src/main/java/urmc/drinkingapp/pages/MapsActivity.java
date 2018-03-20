@@ -30,41 +30,24 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import mehdi.sakout.fancybuttons.FancyButton;
-import urmc.drinkingapp.MainActivity;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
@@ -130,15 +113,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lat").setValue(latitude);
                 mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lon").setValue(longitude);
 
-
                 //get the location name from latitude and longitude
                 Geocoder geocoder = new Geocoder(getApplicationContext());
                 try {
                     List<Address> addresses =
                             geocoder.getFromLocation(latitude, longitude, 1);
-                    String result = addresses.get(0).getSubLocality() + ":";
-                    result += addresses.get(0).getLocality() + ":";
-            result += addresses.get(0).getCountryCode();
+//                    String result = addresses.get(0).getSubLocality() + ":";
+//                    result += addresses.get(0).getLocality() + ":";
+//                    result += addresses.get(0).getCountryCode();
                     LatLng latLng = new LatLng(latitude, longitude);
                     mMarker.setPosition(latLng);
                     mMap.setMaxZoomPreference(20);
@@ -174,7 +156,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "onMapReady()");
 
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -182,6 +165,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            Toast.makeText(this,"User permission required",Toast.LENGTH_LONG).show();
             return;
         }
         mFusedLocationClient.getLastLocation()
@@ -196,7 +180,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             double longitude = location.getLongitude();
                             mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lat").setValue(latitude);
                             mFirebaseDAO.getUserDatabase().child(Utils.getUid()).child("lon").setValue(longitude);
-
                             // Logic to handle location object
                             LatLng latLng = new LatLng(MyLocation.getLatitude(), MyLocation.getLongitude());
                             mMarker = mMap.addMarker(new MarkerOptions()
@@ -212,15 +195,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
         mMap.setMyLocationEnabled(true);
-
         //add marker for friends
         createMarker();
     }
 
     private void createMarker() {
-        final String userId = Utils.getUid();
         mFriendsList = new HashMap<>();
-
         // iterate through users
         mFirebaseDAO.getUserDatabase().addValueEventListener(
                 new ValueEventListener() {
@@ -242,6 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 friend.getFriendStatus() == Friend.BUDDY){
                                             if(mFriendsList.containsKey(user.getID())){
                                                 LatLng location = new LatLng(user.getLat(), user.getLon());
+                                                // get buddys current location
                                                 Marker temp =   mFriendsList.get(user.getID());
                                                 if(user.isDrunk()){
                                                     temp.setPosition(location);
@@ -252,23 +233,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                     temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                                 }
                                             }
-                                            // new entry
+                                            // new entry, mark the buddys location on the map
                                             else{
                                                 if(user.getLat() != null && user.getLon() != null) {
                                                     LatLng location = new LatLng(user.getLat(), user.getLon());
-
                                                     Marker temp = mMap.addMarker(new MarkerOptions()
                                                             .position(location)
                                                             .title(user.getFirstname() + " " + user.getLastname()));
-
                                                     if(user.isDrunk()){
                                                         temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                                                     }
                                                     else{
                                                         temp.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                                     }
-
-
                                                     mFriendsList.put(user.getID(), temp);
                                                 }
                                             }
@@ -277,15 +254,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-
                                 }
                             });
                         }
-
-                        Iterable<DataSnapshot> mUserChildren = dataSnapshot.getChildren();
-
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());

@@ -45,11 +45,8 @@ public class SignInFragment extends Fragment {
     //widgets
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
-    //private Button mSignInButton;
     private FancyButton mSignInButton;
-    //private Button mSignUpButton;
     private FancyButton mSignUpButton;
-
     private FancyButton mTwitterSignIn;
     private FancyButton mGoogleSignIn;
     private FancyButton mFacebookSignIn;
@@ -122,16 +119,12 @@ public class SignInFragment extends Fragment {
             }
         };
 
-
         //wiring up widgets
         mEmailEditText = (EditText)view.findViewById(R.id.edit_text_enter_email);
         mPasswordEditText = (EditText)view.findViewById(R.id.edit_text_enter_password);
         mTwitterSignIn = (FancyButton)view.findViewById(R.id.button_twitter_online_sign_in);
         mFacebookSignIn = (FancyButton)view.findViewById(R.id.button_facebook_online_sign_in);
         mGoogleSignIn = (FancyButton)view.findViewById(R.id.button_gplus_online_sign_in);
-
-
-
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -193,12 +186,12 @@ public class SignInFragment extends Fragment {
         });
 
         //debug only
+        //TODO remove sample
         mEmailEditText.setText("a@a.com");
         mPasswordEditText.setText("aaaaaa");
         mSignInButton.callOnClick();
 
         //listener for the signUp button - starts the signUp Fragment
-        //mSignUpButton = (Button)view.findViewById(R.id.button_sign_up);
         mSignUpButton = (FancyButton) view.findViewById(R.id.button_sign_up);
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +199,6 @@ public class SignInFragment extends Fragment {
                 mListener.SignUpStarted();
             }
         });
-
         return view;
     }
 
