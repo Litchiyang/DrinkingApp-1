@@ -4,7 +4,9 @@ package urmc.drinkingapp.pages.Friends;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -115,7 +119,30 @@ public class MyFriendsTabFragment extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(FriendsViewHolder holder, int position, User model) {
+            protected void onBindViewHolder(final FriendsViewHolder holder, int position, final User model) {
+                Log.d(TAG,"WTF");
+                if(!model.getProfilePic().equals("none")){
+                    Log.d(TAG,"profile pic location: "+model.getProfilePic());
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = storage.getReference();
+                    Glide.with(getActivity()).load(model.getProfilePic()).into(holder.mProfilePic);
+//                    storageRef.child(model.getProfilePic()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            Log.d(TAG,"load img for " + model.getLastname() + model.getFirstname()+" with location " + model.getProfilePic());
+//                            Glide.with(getActivity()).load(uri).into(holder.mProfilePic);
+//                            // TODO: handle uri
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception exception) {
+//                            // Handle any errors
+//                        }
+//                    });
+
+
+                }
+
                 holder.bindUser(model);
             }
         };

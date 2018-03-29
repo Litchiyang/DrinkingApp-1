@@ -124,8 +124,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng latLng = new LatLng(latitude, longitude);
 
                         mMarker.setPosition(latLng);
-                        mMap.setMaxZoomPreference(20);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//                        mMap.setMaxZoomPreference(20);
+//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -170,6 +170,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             Toast.makeText(this,"User permission required",Toast.LENGTH_LONG).show();
+            finish();
             return;
         }
         mFusedLocationClient.getLastLocation()

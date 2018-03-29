@@ -10,7 +10,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import urmc.drinkingapp.R;
 import urmc.drinkingapp.model.User;
 
-
+//no longer used
 public class BuddiesViewHolder extends RecyclerView.ViewHolder {
     public ImageView mProfilePic;
     public TextView mUserName;
@@ -54,10 +54,8 @@ public class BuddiesViewHolder extends RecyclerView.ViewHolder {
             mProfilePic.setImageBitmap(photo);
             mProfilePic.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }*/
-
         //set all the other attributes
         mUserName.setText(user.getFirstname()+" "+user.getLastname());
-
     }
 
 }

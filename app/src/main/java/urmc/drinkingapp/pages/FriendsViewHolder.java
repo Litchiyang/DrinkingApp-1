@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,17 +62,18 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
         mUser = user;
         //set up the picture
         String mPath = user.getProfilePic();
-        if (!mPath.matches("none")){
-            Bitmap photo = Utils.getScaledBitmap(mPath, 200, 200);
-            mProfilePic.setImageBitmap(photo);
-            mProfilePic.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        }
+//        if (!mPath.matches("none")){
+//            Glide.with()
+//            Bitmap photo = Utils.getScaledBitmap(mPath, 200, 200);
+//            mProfilePic.setImageBitmap(photo);
+//            mProfilePic.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//        }
 
         mUserName.setText(user.getFirstname()+" "+user.getLastname());
         mPhoneNumber.setText(user.getPhoneNumber());
         final FirebaseDAO dao = new FirebaseDAO();
         final Friend[] friend = new Friend[1]; // nasty hack to access inner class
-        //get all users friends
+        //get all user's friends
         final DatabaseReference friendEntry = dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID());
         friendEntry.addValueEventListener(new ValueEventListener() {
             @Override
@@ -133,13 +135,16 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                         case Friend.RECEIVED:       // accept friend request
                             mUnfriendButton.setVisibility(View.VISIBLE);
                             friendEntry.child("friendStatus").setValue(Friend.FRIEND);
-                            dao.getFriendsDatabase().child(user.getID()).child("friendStatus").setValue(Friend.FRIEND);
+                            dao.getFriendsDatabase().child(user.getID()).child(Utils.getUid()).child("friendStatus").setValue(Friend.FRIEND);
                             break;
                         case Friend.FRIEND:         // promote to buddy
                             friendEntry.child("friendStatus").setValue(Friend.BUDDY);
+                            dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID()).child("friendStatus").setValue(Friend.BUDDY);
                             break;
                         case Friend.BUDDY:          // demote to friend
                             friendEntry.child("friendStatus").setValue(Friend.FRIEND);
+                            dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID()).child("friendStatus").setValue(Friend.FRIEND);
+
                             break;
                         default:
                 }
@@ -159,6 +164,7 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dao.deleteFriend(Utils.getUid(),friend[0].getfriendID());
+                                dao.deleteFriend(friend[0].getfriendID(),Utils.getUid());
                             }
                         })
                         .setNegativeButton(R.string.no, null);

@@ -158,9 +158,11 @@ public class OnlineEditProfileFragment extends Fragment {
                 mUser.setFirstname(mFirstnameEditText.getText().toString());
                 mUser.setLastname(mLastnameEditText.getText().toString());
                 mUser.setPhoneNumber(mPhonenumberEditText.getText().toString());
-                dao.updateUser(mUser);
                 mListener.EditProfileOK();
-                if(!mUser.getProfilePic().equals("none")){uploadPic();}
+                if(!mUser.getProfilePic().equals("none")){
+                    uploadPic();
+                }
+                dao.updateUser(mUser);
                 /*
                 getActivity().setResult(Activity.RESULT_OK);
                 getActivity().finish();*/
@@ -229,7 +231,6 @@ public class OnlineEditProfileFragment extends Fragment {
         try {
             InputStream stream = new FileInputStream(new File(mPath));
             UploadTask uploadTask = mUserStorageRef.putStream(stream);
-
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -243,12 +244,15 @@ public class OnlineEditProfileFragment extends Fragment {
                     @SuppressWarnings("VisibleForTests")
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Log.d(TAG,"uploadPic() success with uri:"+downloadUrl);
+                    FirebaseDAO dao = new FirebaseDAO();
+                    dao.getUserDatabase().child(Utils.getUid()).child("profilePic").setValue(downloadUrl.toString());
                 }
             });
         }
         catch (Exception e){
             Log.d(TAG,"File not found");
         }
+
     }
 
     private void loadPic(){

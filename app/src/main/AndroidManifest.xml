@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -101,6 +102,17 @@
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
+
+        <!--monitor text activity-->
+        <!--<receiver android:name=".control.SMSListener"  android:enabled="true">-->
+            <!--<intent-filter android:priority="999">-->
+                <!--<action android:name="android.provider.Telephony.SMS_RECEIVED"/>-->
+                <!--<action android:name="android.provider.Telephony.SMS_SENT"/>-->
+        <!--</intent-filter></receiver>-->
+
     </application>
+
+
+
 
 </manifest>

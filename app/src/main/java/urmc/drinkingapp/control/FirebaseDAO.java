@@ -34,9 +34,7 @@ public class FirebaseDAO {
     private static DatabaseReference mUserDB;
     private String stringCursor;
     private Friend friendCursor;
-    private User userCursor;
-    private ArrayList<Friend> friendList;
-    private ArrayList<User> userList;
+
 
     public FirebaseDAO(){
         Log.d(TAG,"Begin FirebaseDAO init");
@@ -53,30 +51,6 @@ public class FirebaseDAO {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mUserDB = mDatabase.child("users");
         mFriendDB = mDatabase.child("friends");
-//        mUserDB.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-//                    Log.d(TAG,userSnapshot.getKey());
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.e(TAG,"Connection Failed");
-//            }
-//        });
-//
-//        mFriendDB.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot userSnapshot: dataSnapshot.getChildren()) {
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.e(TAG,"Connection Failed");
-//            }
-//        });
     }
 
     public void updateUser(User user){

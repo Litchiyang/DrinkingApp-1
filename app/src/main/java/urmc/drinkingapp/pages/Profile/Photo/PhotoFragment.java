@@ -25,11 +25,9 @@ public class PhotoFragment extends Fragment {
     private PhotoCollection mPhotoCollection;
     private List<String> mFilesList;
 
-
     public PhotoFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

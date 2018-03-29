@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +41,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
+import urmc.drinkingapp.control.SMSListener;
 import urmc.drinkingapp.control.Utils;
 import urmc.drinkingapp.model.Friend;
 import urmc.drinkingapp.pages.DrunkMode.DrunkModeDefaultActivity;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private SlideView mDrunkMode;
     int READ_SMS_REQUEST_CODE = 77;
     private static final String TAG = "MainActivity";
-
+    private static final Uri SMS_STATUS_URI = Uri.parse("content://sms");
     private int analyzeText;
 
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -73,14 +75,45 @@ public class MainActivity extends AppCompatActivity {
     private GraphView mGraph;
     private FirebaseDAO dao;
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     //http://devdeeds.com/android-location-tracking-in-background-service/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 0;
+        //following came from sample
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECEIVE_SMS)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECEIVE_SMS},
+                        MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
 
 
+        SMSListener smsSentObserver = new SMSListener(new Handler(), this);
+        this.getContentResolver().registerContentObserver(SMS_STATUS_URI, true, smsSentObserver);
 
         //Obtain the FirebaseAnalytics instance - Initial tests with the Firabase framework
         //More useful information can be placed here to analyze how the user is using the app
@@ -97,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
 //        friend.setfriendID("VNaOwu9sAVPdtQP6CACAxCU3eK93");
 //        friend.setFriendStatus(3);
 //        dao.setFriend(Utils.getUid(), friend);
-
 
         Query q = dao.getFriendsDatabase().child(Utils.getUid());
         q.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -283,9 +315,9 @@ public class MainActivity extends AppCompatActivity {
         HashMap<Date,Integer> drunkDays = new HashMap<Date,Integer>();
         if (cursor.moveToFirst()) { // must check the result to prevent exception
             do {
-                Date messageDate = millisToDate(Long.parseLong(cursor.getString(4)));
-                Log.e("DATE-TO-STRING", dateToString(messageDate));
-                Log.e("STRING-TO-DATE", stringToDate(dateToString(messageDate)).toString());
+                Date messageDate = millisToDate(Long.parseLong(cursor.getString(cursor.getColumnIndex("date"))));
+                Log.d("DATE-TO-STRING", dateToString(messageDate));
+                Log.d("STRING-TO-DATE", stringToDate(dateToString(messageDate)).toString());
                 messageDate = stringToDate(dateToString(messageDate));
                 if (finalDate == null){
                     finalDate = messageDate;
