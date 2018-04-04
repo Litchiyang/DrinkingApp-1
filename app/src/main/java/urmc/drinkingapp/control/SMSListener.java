@@ -13,17 +13,13 @@ public class SMSListener extends ContentObserver {
     private Context mContext;
     private String contactId = "", contactName = "";
     private String smsBodyStr = "", phoneNoStr = "";
+    private long previousTime = 0;
 
     private static final Uri SMS_STATUS_URI = Uri.parse("content://sms/sent");
 
     public SMSListener(Handler handler, Context ctx) {
         super(handler);
         mContext = ctx;
-    }
-
-    @Override
-    public boolean deliverSelfNotifications() {
-        return true;
     }
 
     public void onChange(boolean selfChange) {
@@ -44,7 +40,16 @@ public class SMSListener extends ContentObserver {
                             smsBodyStr = sms_sent_cursor.getString(sms_sent_cursor.getColumnIndex("body")).trim();
                             phoneNoStr = sms_sent_cursor.getString(sms_sent_cursor.getColumnIndex("address")).trim();
                             smsDatTime = sms_sent_cursor.getLong(sms_sent_cursor.getColumnIndex("date"));
-
+                            if(previousTime == 0) {
+                                previousTime = smsDatTime;
+                            }
+                            else if(previousTime == smsDatTime){
+                                return;
+                            }
+                            else{
+                                previousTime = smsDatTime;
+                            }
+                            //handle text here
                             Log.d(TAG,"SMS Content : "+smsBodyStr);
                             Log.d(TAG,"SMS Phone No : "+phoneNoStr);
                             Log.d(TAG,"SMS Time : "+smsDatTime);

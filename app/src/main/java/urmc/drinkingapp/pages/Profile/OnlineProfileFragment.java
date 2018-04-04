@@ -151,7 +151,6 @@ public class OnlineProfileFragment extends Fragment {
                                 mProfilePicture.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             }
                         }
-
                         // [END_EXCLUDE]
                     }
 
@@ -187,13 +186,8 @@ public class OnlineProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
-
-
-
         return view;
     }
-
-
 
     //method to update the UI after the EditProfile Activity Returns
     public void updateUI(){

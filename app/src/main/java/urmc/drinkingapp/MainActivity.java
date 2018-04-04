@@ -341,51 +341,6 @@ public class MainActivity extends AppCompatActivity {
                         drunkDays.put(messageDate, 1);
                     }
                 }
-
-                /*
-
-                for (int idx = 0; idx < cursor.getColumnCount(); idx++) {
-                    msgData += " " + cursor.getColumnName(idx) + ":" + cursor.getString(idx);
-                    //Date messageDate = null;
-
-                    /*
-                    if (cursor.getColumnName(idx).equals("date")) {
-                        messageDate = millisToDate(Long.parseLong(cursor.getString(idx)));
-                        if (initialDate==null){
-                            initialDate = messageDate;
-                        }
-                        finalDate = messageDate;
-                    }
-
-                    if (cursor.getColumnName(idx).equals("body")) {
-                        if (isDrunk(cursor.getString(idx),params,BOW)){
-                            if (drunkDays.containsKey(messageDate)){
-                                Log.e("ADDING DATE",messageDate.toString());
-                                drunkDays.put(messageDate,drunkDays.get(messageDate)+1);
-                            }else{
-                                Log.e("ADDING DATE",messageDate.toString());
-                                drunkDays.put(messageDate,1);
-                            }
-                        }
-                        /*
-                        Toast.makeText(MainActivity.this,
-                                cursor.getString(idx),
-                                Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    /*
-                    if (cursor.getColumnName(idx).equals("date")) {
-                        Toast.makeText(MainActivity.this,
-                                millisToDate(Long.parseLong(cursor.getString(idx))),
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    Toast.makeText(MainActivity.this,
-                            cursor.getString(12),
-                            Toast.LENGTH_SHORT).show();
-
-                } */
                 // use msgData
             } while (cursor.moveToNext());
         } else {
@@ -394,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
                     "No texts available",
                     Toast.LENGTH_SHORT).show();
         }
-
         //Display the drunk texting behavior on a graph
         displayGraph(drunkDays, initialDate, finalDate);
     }
@@ -427,61 +381,6 @@ public class MainActivity extends AppCompatActivity {
                 //System.out.println(date +" "+drunkDays.get(date));
             }
 
-
-            /*
-            System.out.println(dataPoints);
-            System.out.println(dateArray);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, 1);
-            Date d2 = calendar.getTime();
-
-            calendar.add(Calendar.DATE, 1);
-            Date d3 = calendar.getTime();
-
-            calendar.add(Calendar.DATE, 1);
-            Date d4 = calendar.getTime();
-
-            dataPoints[dataPoints.length-3] = new DataPoint(d2,5);
-            dataPoints[dataPoints.length-2] = new DataPoint(d3,1);
-            dataPoints[dataPoints.length-1] = new DataPoint(d4,7);
-            */
-
-
-/*
-            // generate Dates
-            Calendar calendar = Calendar.getInstance();
-            Date d1 = calendar.getTime();
-            calendar.add(Calendar.DATE, 1);
-            Date d2 = calendar.getTime();
-            calendar.add(Calendar.DATE, 1);
-            Date d3 = calendar.getTime();
-            calendar.add(Calendar.DATE, 1);
-            Date d4 = calendar.getTime();
-            calendar.add(Calendar.DATE, 1);
-            Date d5 = calendar.getTime();
-
-            System.out.println(d5);
-
-
-
-// you can directly pass Date objects to DataPoint-Constructor
-// this will convert the Date to double via Date#getTime()
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                    new DataPoint(d1, 1),
-                    new DataPoint(d2, 5),
-                    new DataPoint(d3, 3),
-                    new DataPoint(d4, 7),
-                    new DataPoint(d5, 4)
-            });
-
-
-            mGraph.addSeries(series);
-            // set manual x bounds to have nice steps
-            mGraph.getViewport().setMinX(d1.getTime());
-            mGraph.getViewport().setMaxX(d3.getTime());
-
-            */
 
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
             series.setTitle("Drunk Texts");
