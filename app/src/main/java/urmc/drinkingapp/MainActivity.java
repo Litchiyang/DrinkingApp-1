@@ -39,6 +39,7 @@ import java.util.Locale;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import ng.max.slideview.SlideView;
+import urmc.drinkingapp.control.DrunkAlgorithm;
 import urmc.drinkingapp.control.FirebaseDAO;
 import urmc.drinkingapp.control.IntentParam;
 import urmc.drinkingapp.control.SMSListener;
@@ -242,25 +243,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG,"data access created");
 
-//        //If permission to read text messages has been granted then proceed to do so and analyze the drunk texting behavior
-//        //otherwise show rationale and request permission
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS)
-//                == PackageManager.PERMISSION_GRANTED) {
-//            //Check texts
-//            readTexts();
-//
-//        } else {
-//            // Show rationale and request permission.
-//            Toast.makeText(MainActivity.this,
-//                    "This App requires your permission to access your texts and evaluate your drunk texting behavior",
-//                    Toast.LENGTH_LONG).show();
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{android.Manifest.permission.READ_SMS},
-//                    READ_SMS_REQUEST_CODE);
-//        }
-
-
-
 
 
         /*
@@ -303,11 +285,7 @@ public class MainActivity extends AppCompatActivity {
      * displayGraph() function to show this information in a nice graph.
      */
     public void readTexts() {
-        //get parameters from .txt file stored in assets folder
-        HashMap<String, Float> params = readParameters();
-        //get Bag of words from .txt file stored in assets folder
-        ArrayList<String> BOW = getDrunkWords();
-
+        DrunkAlgorithm drunkTest = new DrunkAlgorithm(this);
         Date initialDate = null;
         Date finalDate = null;
 
@@ -329,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 //using drunk text analysis to determine whether a given text is considered drunk texting or not
                 //depending on the results add the date to the drunkDays hashMap and increase the counter for that day
                 Log.d(TAG,"Drunk test:"+cursor.getString(12));
-                if (isDrunk(cursor.getString(12),params,BOW)) {
+                if (drunkTest.isDrunk(cursor.getString(12))) {
                     dao.getUserDatabase().child(Utils.getUid()).child("isDrunk").setValue(true);
                     if (drunkDays.containsKey(messageDate)) {
                         Log.e("ADDING DATE", messageDate.toString());
@@ -440,84 +418,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Read parameters from .txt file in the assets folder
-    public HashMap<String, Float> readParameters(){
-        HashMap<String, Float> params = new HashMap<String, Float>();
-        //try (BufferedReader br = new BufferedReader(new FileReader("par1.txt"))) {
-        try{
-            InputStreamReader is = new InputStreamReader(getAssets().open("par1.txt"));
-            try (BufferedReader br = new BufferedReader(is)) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    Log.e("READFILE",line);
-                    String[] parpr = line.split("	");
-                    Float reg = Float.parseFloat(parpr[0]);
-                    params.put(parpr[1], reg);
-                }
-            }
-        }catch (Exception e){
-            Log.e("FILEREADER","Exception Params");
-        }
-        return params;
-    }
 
-    //Read drunk words (bag of words) from .txt file in the assets folder
-    public ArrayList<String> getDrunkWords(){
-        ArrayList<String> BOW = new ArrayList<String>();
-        try{
-            InputStreamReader is = new InputStreamReader(getAssets().open("bank_of_words.txt"));
-            try (BufferedReader br = new BufferedReader(is)) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    Log.e(TAG,"READFILE BOW"+line);
-                    BOW.add(line);
-                }
-            }
-        }catch (Exception e){
-            Log.e("FILEREADER","Exception Drunk Words");
-        }
-        return BOW;
-    }
 
-    //Nabil's algorithm to determine if a given text is considered as drunk texting or not
-    public static boolean isDrunk(String text,HashMap<String, Float> params , ArrayList<String> BOW) {
-        text = text.toLowerCase();
-        boolean first_test  = false;
-        for(String test: BOW)
-        {
-            if(text.contains(test))
-            {
-                first_test = true;
-                break;
-            }
-        }
-        if(first_test)
-        {
-            float threshold = 0;
-            for(String key: params.keySet())
-            {
-                if(text.contains(key))
-                {
-                    threshold += params.get(key);
-                }
-            }
-            if(threshold > 0)
-            {
-                Log.e("DRUNKTEST","true"+" "+threshold);
-                return true;
-            }
-            else
-            {
-                Log.e("DRUNKTEST","false"+" "+threshold);
-                return false;
-            }
-        }
-        else
-        {
-            Log.e("DRUNKTEST","false no threshold");
-            return false;
-        }
-    }
+
+
+
 
     //convert the millisecond format from the SMS attributes to a date
     public Date millisToDate(long currentTime) {
