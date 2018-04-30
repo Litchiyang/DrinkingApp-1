@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 
 public class SMSListener extends ContentObserver {
 
@@ -14,7 +17,10 @@ public class SMSListener extends ContentObserver {
     private String contactId = "", contactName = "";
     private String smsBodyStr = "", phoneNoStr = "";
     private long previousTime = 0;
+    private boolean isDrunk;
+    private final String key = "drunk";
 
+    private static DrunkAlgorithm mDrunkAlgorithm;
     private static final Uri SMS_STATUS_URI = Uri.parse("content://sms/sent");
 
     public SMSListener(Handler handler, Context ctx) {
@@ -50,6 +56,14 @@ public class SMSListener extends ContentObserver {
                                 previousTime = smsDatTime;
                             }
                             //handle text here
+                            //smsbody_str test drunk algorithm
+                            isDrunk = mDrunkAlgorithm.isDrunk(smsBodyStr);
+                            //result putextra to
+                            Intent intent = new Intent(this, );
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(key, isDrunk);
+                            intent.putExtras(bundle);
+                            
                             Log.d(TAG,"SMS Content : "+smsBodyStr);
                             Log.d(TAG,"SMS Phone No : "+phoneNoStr);
                             Log.d(TAG,"SMS Time : "+smsDatTime);
