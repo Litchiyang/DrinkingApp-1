@@ -31,7 +31,6 @@ public class EditProfileActivity extends AppCompatActivity {
         mEditProfileFragment.setArguments(extras);
         //onSavedInstanceState standard procedure
         if (savedInstanceState!=null){
-            //mEditProfileFragment = (EditProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"FRAGMENT");
             mEditProfileFragment = (OnlineEditProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState, IntentParam.FRAGMENT);
         }
         FragmentManager fm = getSupportFragmentManager();

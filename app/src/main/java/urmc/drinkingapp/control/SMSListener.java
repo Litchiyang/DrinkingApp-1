@@ -9,14 +9,19 @@ import android.util.Log;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
+/*
+ * this is the class that monitors user sms activity, it is triggered every time user sends a sms
+ * message.
+ *
+ * TODO: add in the drunk algorithm in background to monitor
+ */
 public class SMSListener extends ContentObserver {
 
     private static final String TAG = "SMSListener";
     private Context mContext;
     private String contactId = "", contactName = "";
     private String smsBodyStr = "", phoneNoStr = "";
-    private long previousTime = 0;
+    private long previousTime = 0;  // variable used to make sure not triggering onChange multiple times
     private boolean isDrunk;
     private final String key = "drunk";
 
@@ -55,14 +60,14 @@ public class SMSListener extends ContentObserver {
                             else{
                                 previousTime = smsDatTime;
                             }
-                            //handle text here
-                            //smsbody_str test drunk algorithm
-                            isDrunk = mDrunkAlgorithm.isDrunk(smsBodyStr);
-                            //result putextra to
-                            Intent intent = new Intent(this, );
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(key, isDrunk);
-                            intent.putExtras(bundle);
+                            //following begins text monitoring
+//                            mDrunkAlgorithm = new DrunkAlgorithm();
+//                            isDrunk = mDrunkAlgorithm.isDrunk(smsBodyStr);
+//                            //result putextra to
+//                            Intent intent = new Intent(this, );
+//                            Bundle bundle = new Bundle();
+//                            bundle.putBoolean(key, isDrunk);
+//                            intent.putExtras(bundle);
                             
                             Log.d(TAG,"SMS Content : "+smsBodyStr);
                             Log.d(TAG,"SMS Phone No : "+phoneNoStr);
@@ -78,6 +83,5 @@ public class SMSListener extends ContentObserver {
             Log.e(TAG, "Error on onChange : "+sggh.toString());
         }
         super.onChange(selfChange);
-    }//fn onChange
-
+    }
 }//End of class SmsObserver

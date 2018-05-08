@@ -144,10 +144,6 @@ public class OnlineProfileFragment extends Fragment {
 
                             if (!mPath.matches("none")){
                                 loadPic();
-                                /*
-                                Bitmap photo = getScaledBitmap(mPath, 200, 200);
-                                mProfilePicture.setImageBitmap(photo);
-                                */
                                 mProfilePicture.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             }
                         }
@@ -225,8 +221,6 @@ public class OnlineProfileFragment extends Fragment {
                                 mProfilePicture.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             }
                         }
-
-                        // [END_EXCLUDE]
                     }
 
                     @Override
@@ -243,16 +237,19 @@ public class OnlineProfileFragment extends Fragment {
     }
 
     private void loadPic(){
-        RequestOptions ro = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true);
         Log.d(TAG,"loading image:"+mUserStorageRef);
         FirebaseDAO dao = new FirebaseDAO();
+        // clear cache to load from Firebase
         dao.getUserDatabase().child(Utils.getUid()).child("profilePic").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.equals("none")){
+                    RequestOptions ro = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true);
                     Log.d(TAG,"Loading image from firebase with location:"+dataSnapshot.getValue().toString());
                     Glide.with(getContext())
-                            .load(dataSnapshot.getValue().toString())
+                            .load(mUserStorageRef)
+                            .apply(ro)
+//                            .load(dataSnapshot.getValue().toString())
                             .into(mProfilePicture);
                 }
             }

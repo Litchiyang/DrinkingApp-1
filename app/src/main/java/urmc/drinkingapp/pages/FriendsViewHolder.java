@@ -60,19 +60,11 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
     //bind a user to the viewHolder
     public void bindUser(final User user){
         mUser = user;
-        //set up the picture
-        String mPath = user.getProfilePic();
-//        if (!mPath.matches("none")){
-//            Glide.with()
-//            Bitmap photo = Utils.getScaledBitmap(mPath, 200, 200);
-//            mProfilePic.setImageBitmap(photo);
-//            mProfilePic.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//        }
-
         mUserName.setText(user.getFirstname()+" "+user.getLastname());
         mPhoneNumber.setText(user.getPhoneNumber());
         final FirebaseDAO dao = new FirebaseDAO();
         final Friend[] friend = new Friend[1]; // nasty hack to access inner class
+
         //get all user's friends
         final DatabaseReference friendEntry = dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID());
         friendEntry.addValueEventListener(new ValueEventListener() {
@@ -88,6 +80,7 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                 }
                 else{
                     //process based on friend status
+
                     //TODO: replace these with strings in string.xml
                     switch (friend[0].getFriendStatus()) {
                         case Friend.PENDING:
@@ -122,6 +115,7 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                     //set status to pending on user side
                     friendEntry.child("friendID").setValue(user.getID());
                     friendEntry.child("friendStatus").setValue(Friend.PENDING);
+
                     //register request on friends side
                     dao.getFriendsDatabase().child(user.getID()).child(Utils.getUid()).child("friendID").setValue(Utils.getUid());
                     dao.getFriendsDatabase().child(user.getID()).child(Utils.getUid()).child("friendStatus").setValue(Friend.RECEIVED);
@@ -134,9 +128,12 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                             break;
                         case Friend.RECEIVED:       // accept friend request
                             mUnfriendButton.setVisibility(View.VISIBLE);
+                            //change both users status to friends
                             friendEntry.child("friendStatus").setValue(Friend.FRIEND);
                             dao.getFriendsDatabase().child(user.getID()).child(Utils.getUid()).child("friendStatus").setValue(Friend.FRIEND);
                             break;
+                        // following are the cases for changing between buddy and friend
+                        // for extra layer of security we can change this to a higher level of buddy request
                         case Friend.FRIEND:         // promote to buddy
                             friendEntry.child("friendStatus").setValue(Friend.BUDDY);
                             dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID()).child("friendStatus").setValue(Friend.BUDDY);
@@ -144,7 +141,6 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
                         case Friend.BUDDY:          // demote to friend
                             friendEntry.child("friendStatus").setValue(Friend.FRIEND);
                             dao.getFriendsDatabase().child(Utils.getUid()).child(user.getID()).child("friendStatus").setValue(Friend.FRIEND);
-
                             break;
                         default:
                 }
@@ -153,11 +149,13 @@ public class FriendsViewHolder extends RecyclerView.ViewHolder{
             }
         });
 
+        //Unfriends is just one click for any relationship between two users
         mUnfriendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"mUnfriendButton onClick() with user"+user.getID());
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                // Confirming the unfriend action
                 builder.setMessage(R.string.unfriend_message)
                         .setTitle(R.string.unfriend)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {

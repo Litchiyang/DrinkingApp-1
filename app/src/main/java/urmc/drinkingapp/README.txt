@@ -1,6 +1,24 @@
 README
 Botcus App
 
+Most controls are done through FirebaseDAO, which implements basic CRUD operations except Read due
+to the fact that Firebase is read asynchronously. The file structure should be relatively easy to
+understand, except under the pages folder, several Fragment classes became obsolete and was never used.
+Anything referring BuddyFragment should be deleted and burned to hell. The main functionality of the
+app is implemented except the background monitoring.
+
+For more specific settings such as GoingOutSettings, the idea was mentioned but was not implemented,
+such as having a list of friends to select to call when going out. But the page became redundant after
+the more generic implementation of MyFriendsTabFragment where you can select people to call.
+
+When browsing through the code, one might discover some confusing local database access code, it
+could be caused an earlier version of the program was storing information locally.
+
+
+
+
+============Below is the readme for previous version===============
+
 First of all, if you have any questions when going over this app and how things work please contact me and I would be happy to explain anything to you. My email is aless.incerto@gmail.com. Additionally, you're going to need access to the Firebase database so I need to authorize you.
 
 The Botcus App uses 4 external libraries that you should review in case you encounter something that doesn't look like the Android Standard.

@@ -1,5 +1,4 @@
 package urmc.drinkingapp;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,9 +23,6 @@ import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     private FancyButton mSettings;
     private FancyButton mText;
     private FancyButton mMap;
-    private SlideView mDrunkMode;
     int READ_SMS_REQUEST_CODE = 77;
     private static final String TAG = "MainActivity";
     private static final Uri SMS_STATUS_URI = Uri.parse("content://sms");
@@ -122,15 +116,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
 
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-
         dao = new FirebaseDAO();
-
-
-        //TODO remove test code
-//        Friend friend = new Friend();
-//        friend.setfriendID("VNaOwu9sAVPdtQP6CACAxCU3eK93");
-//        friend.setFriendStatus(3);
-//        dao.setFriend(Utils.getUid(), friend);
 
         Query q = dao.getFriendsDatabase().child(Utils.getUid());
         q.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -149,23 +135,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Log.d(TAG,"test query:"+q.toString());
-        //Set up initial empty graph
-//        mGraph = (GraphView) findViewById(R.id.main_activity_graph);
-//        mGraph.getGridLabelRenderer().setNumVerticalLabels(3);
-//        mGraph.getGridLabelRenderer().setGridColor(Color.WHITE);
-//        mGraph.getGridLabelRenderer().setHorizontalLabelsColor(Color.WHITE);
-//        mGraph.getGridLabelRenderer().setVerticalLabelsColor(Color.WHITE);
-//        mGraph.setTitleColor(Color.WHITE);
-//        mGraph.setTitle("Drunk Texting Behavior");
-        /*
-        mGraph.getLegendRenderer().setVisible(true);
-        mGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-        mGraph.getLegendRenderer().setBackgroundColor(16777215);
-        mGraph.getLegendRenderer().setTextColor(Color.WHITE);
-        */
 
         analyzeText = getIntent().getIntExtra(IntentParam.ANALYZE, 0);
-
         //Start analyzing texts
         mText = (FancyButton) findViewById(R.id.button_analyzing_text_main_activity);
         mGraph = (GraphView) findViewById(R.id.main_activity_graph);
@@ -243,19 +214,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG,"data access created");
 
-
-
-        /*
-        mDrunkMode = (Switch) findViewById(R.id.switch_main_activity);
-        mDrunkMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Intent i = new Intent(MainActivity.this, DrunkModeDefaultActivity.class);
-                startActivity(i);
-            }
-        });
-
-        */
-
         //start drunk mode when slide is completed
         ((SlideView) findViewById(R.id.switch_main_activity)).setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
             @Override
@@ -267,12 +225,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-
-    //Other options - Currently using SENT
-    // public static final String INBOX = "content://sms/inbox";
-    // public static final String SENT = "content://sms/sent";
-    // public static final String DRAFT = "content://sms/draft";
 
     //disable back button
     @Override
@@ -300,9 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 if (finalDate == null){
                     finalDate = messageDate;
                 }
-                //Log.e("INITIALDATE",finalDate.toString());
                 initialDate = messageDate;
-                //Log.e("FINALDATE",initialDate.toString());
 
                 //using drunk text analysis to determine whether a given text is considered drunk texting or not
                 //depending on the results add the date to the drunkDays hashMap and increase the counter for that day
@@ -348,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
                     //dataPoints[index] = new DataPoint(date,drunkDays.get(date));
                     //index++;
                     dateArray.add(date);
-                    //System.out.println(date +" "+drunkDays.get(date));
                 }
             }
             Collections.sort(dateArray);
@@ -356,9 +305,7 @@ public class MainActivity extends AppCompatActivity {
             for (Date date:dateArray){
                 dataPoints[index] = new DataPoint(date,drunkDays.get(date));
                 index++;
-                //System.out.println(date +" "+drunkDays.get(date));
             }
-
 
             LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
             series.setTitle("Drunk Texts");
@@ -417,12 +364,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
-
-
 
     //convert the millisecond format from the SMS attributes to a date
     public Date millisToDate(long currentTime) {
